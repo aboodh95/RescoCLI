@@ -16,9 +16,9 @@ namespace RescoCLI
 {
 
     [HelpOption("--help")]
-    public abstract class HARTBBase
+    public abstract class RescoCLIBase
     {
-        public HARTBBase()
+        public RescoCLIBase()
         {
         }
         protected virtual Task<int> OnExecute(CommandLineApplication app)

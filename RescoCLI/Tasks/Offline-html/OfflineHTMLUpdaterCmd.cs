@@ -16,17 +16,14 @@ using System.Net;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "update", Description = "Update the project form libraries code from the solution code base", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class OfflineHTMLUpadetorCmd : HARTBBase
+    public class OfflineHTMLUpdaterCmd : RescoCLIBase
     {
 
-        [Option(CommandOptionType.NoValue, ShortName = "d", LongName = "isDevlopment", Description = "Pushing To Development", ValueName = "isDevlopment", ShowInHelpText = true)]
-        public bool isDevlopment { get; set; } = true;
+        [Option(CommandOptionType.NoValue, ShortName = "d", LongName = "isDevelopment", Description = "Pushing To Development", ValueName = "isDevelopment", ShowInHelpText = true)]
+        public bool isDevelopment { get; set; } = true;
 
-        public OfflineHTMLUpadetorCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public OfflineHTMLUpdaterCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-
-
-
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
@@ -38,13 +35,13 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            var configuration =await Configuration.GetConfigrationAsync();
+            var configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevlopment);
+            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevelopment);
             return 0;
         }
 
-        public async Task PushFormLibraries(string url, NetworkCredential networkCredential, string projectId, string folderPath, string folderName, bool isDevlopment)
+        public async Task PushFormLibraries(string url, NetworkCredential networkCredential, string projectId, string folderPath, string folderName, bool isDevelopment)
         {
             var dataService = new Resco.Cloud.Client.WebService.DataService(url)
             {

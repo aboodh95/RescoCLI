@@ -18,14 +18,14 @@ using RescoCLI.Helpers;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "plugin", Description = "Update the plugin dll from local file", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class PluginCmd : HARTBBase
+    public class PluginCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
 
         [Option(CommandOptionType.SingleValue, ShortName = "p", LongName = "path", Description = "The path of the dll", ValueName = "plugin path", ShowInHelpText = true)]
         public string DllPath { get; set; }
 
-        public PluginCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public PluginCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

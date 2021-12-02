@@ -16,11 +16,11 @@ namespace RescoCLI.Tasks
 
 
     [Command(Name = "remove", Description = "Remove connection from the connection list", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    class RemoveConnectionCmd : HARTBBase
+    class RemoveConnectionCmd : RescoCLIBase
     {
         [Option(CommandOptionType.SingleValue, ShortName = "i", LongName = "index", Description = "Index of the Connection", ValueName = "0", ShowInHelpText = true)]
         public int? Index { get; set; }
-        public RemoveConnectionCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public RemoveConnectionCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

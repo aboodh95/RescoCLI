@@ -6,7 +6,6 @@ using Resco.Cloud.Client;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.Metadata;
 using RescoCLI.Configurations;
-using RescoCLI.Configurations;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -20,14 +19,14 @@ using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "c#", Description = "Create classes from entities of the selected org", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class CSharpGeneratorUtilCmd : HARTBBase
+    public class CSharpGeneratorUtilCmd : RescoCLIBase
     {
         [Option(CommandOptionType.SingleValue, ShortName = "f", LongName = "folderPath", Description = "The path of the folder to extract entities to it, default on in configuration", ValueName = "folder path", ShowInHelpText = true)]
         public string FolderPath { get; set; }
         [Option(CommandOptionType.SingleValue, ShortName = "n", LongName = "namespace", Description = "Code Files name space", ValueName = "HA.Resco", ShowInHelpText = true)]
         public string Namespace { get; set; }
 
-        public CSharpGeneratorUtilCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public CSharpGeneratorUtilCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
@@ -180,11 +179,11 @@ namespace RescoCLI.Tasks
                             optionSets.Add($"{entity.Name}.{attribute.Name}");
                             codeMemberProperty.Type = new CodeTypeReference($"{entity.Name}_{attribute.Name}?");
                             codeMemberProperty.GetStatements.Add(new CodeVariableDeclarationStatement(typeof(Nullable<int>), "value", new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<Nullable<int>>(\"{attribute.Name }\")")));
-                            CodeConditionStatement cgeckIfNull = new CodeConditionStatement();
-                            cgeckIfNull.Condition = new CodeSnippetExpression("value != null");
-                            cgeckIfNull.TrueStatements.Add(new CodeSnippetExpression($"return ({entity.Name}_{attribute.Name})value"));
-                            cgeckIfNull.FalseStatements.Add(new CodeSnippetExpression("return null"));
-                            codeMemberProperty.GetStatements.Add(cgeckIfNull);
+                            CodeConditionStatement checkIfNull = new CodeConditionStatement();
+                            checkIfNull.Condition = new CodeSnippetExpression("value != null");
+                            checkIfNull.TrueStatements.Add(new CodeSnippetExpression($"return ({entity.Name}_{attribute.Name})value"));
+                            checkIfNull.FalseStatements.Add(new CodeSnippetExpression("return null"));
+                            codeMemberProperty.GetStatements.Add(checkIfNull);
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", (int)value)"));
                             break;
                         case XrmType.Boolean:
@@ -289,15 +288,15 @@ namespace RescoCLI.Tasks
             fetch.Entity.Filter.Conditions = new List<Condition>();
             fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
             var result = dataService.Fetch(fetch).Entities;
-            List<string> locatlazations = new List<string>();
+            List<string> localizations = new List<string>();
 
             foreach (var item in result)
             {
                 var localization = item["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-                locatlazations.AddRange(localization);
+                localizations.AddRange(localization);
             }
 
-            return locatlazations;
+            return localizations;
         }
 
         private static string ClearDisplayName(string fieldName)

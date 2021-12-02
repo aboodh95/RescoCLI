@@ -29,7 +29,7 @@ namespace RescoCLI
                 Configuration.ConfigurationFilePath = Path.Combine(Configuration.ConfigurationFolderPath, "RescoCLI.json");
             }
 
-            await builder.RunCommandLineApplicationAsync<HARTBCmd>(args);
+            await builder.RunCommandLineApplicationAsync<RescoCLICmd>(args);
 
         }
 

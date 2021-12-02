@@ -20,14 +20,14 @@ namespace RescoCLI.Tasks
 
 
     [Command(Name = "open", Description = "Open the logs as per the last loading of the logs", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    class OpenWorkflowLogsCmd : HARTBBase
+    class OpenWorkflowLogsCmd : RescoCLIBase
     {
 
 
         [Option(CommandOptionType.SingleValue, ShortName = "i", LongName = "index", Description = "The index of the logs to open", ValueName = "Index", ShowInHelpText = true)]
         public int Index { get; set; }
 
-        public OpenWorkflowLogsCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public OpenWorkflowLogsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

@@ -17,11 +17,11 @@ namespace RescoCLI.Tasks
 {
 
     [Command(Name = "offline-html", Description = "Manage all Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand(typeof(OfflineHTMLSetDefaultProjectPathCmd), typeof(OfflineHTMLUpadetorCmd))]
-    class OfflineHTMLCmd : HARTBBase
+    [Subcommand(typeof(OfflineHTMLSetDefaultProjectPathCmd), typeof(OfflineHTMLUpdaterCmd))]
+    class OfflineHTMLCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
-        public OfflineHTMLCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public OfflineHTMLCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

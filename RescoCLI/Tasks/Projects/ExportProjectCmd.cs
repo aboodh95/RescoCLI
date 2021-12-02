@@ -16,7 +16,7 @@ using System.Net;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "export", Description = "Export Woodford Project from Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class ExportProjectCmd : HARTBBase
+    public class ExportProjectCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
 
@@ -27,7 +27,7 @@ namespace RescoCLI.Tasks
         [Option(CommandOptionType.NoValue, ShortName = "e", LongName = "extract", Description = "extract files from zip", ValueName = "extract files from zip", ShowInHelpText = true)]
         public bool Extract { get; set; } = true;
 
-        public ExportProjectCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public ExportProjectCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

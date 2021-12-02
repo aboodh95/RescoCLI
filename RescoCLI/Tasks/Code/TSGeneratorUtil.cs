@@ -20,11 +20,11 @@ using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "ts", Description = "Create classes from entities of the selected org", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class TSGeneratorUtil : HARTBBase
+    public class TSGeneratorUtil : RescoCLIBase
     {
         [Option(CommandOptionType.SingleValue, ShortName = "f", LongName = "folderPath", Description = "The path of the folder to extract entities to it, default on in configuration", ValueName = "folder path", ShowInHelpText = true)]
         public string FolderPath { get; set; }
-        public TSGeneratorUtil(ILogger<HARTBCmd> logger, IConsole console)
+        public TSGeneratorUtil(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 
@@ -234,7 +234,7 @@ namespace RescoCLI.Tasks
             fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "statuscode", Operator = "eq", Value = "1" });
             fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
             var result = dataService.Fetch(fetch);
-            var locatlazations = result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            var localizations = result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
 
             fetch = new Fetch("mobilelocalization");
             fetch.Count = 500;
@@ -244,8 +244,8 @@ namespace RescoCLI.Tasks
             fetch.Entity.Filter.Conditions = new List<Condition>();
             fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
             result = dataService.Fetch(fetch);
-            locatlazations.AddRange(result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList());
-            return locatlazations;
+            localizations.AddRange(result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList());
+            return localizations;
         }
 
         private static string ClearDisplayName(string fieldName)

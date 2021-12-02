@@ -15,13 +15,13 @@ using System.IO.Compression;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "set-default", Description = "Set the id of the default woodford project", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class SetDefaultProjectCmd : HARTBBase
+    public class SetDefaultProjectCmd : RescoCLIBase
     {
 
         [Option(CommandOptionType.SingleValue, ShortName = "pid", LongName = "projectId", Description = "The Id of the project to set as default", ValueName = "project id", ShowInHelpText = true)]
         public string ProjectId { get; set; }
 
-        public SetDefaultProjectCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public SetDefaultProjectCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

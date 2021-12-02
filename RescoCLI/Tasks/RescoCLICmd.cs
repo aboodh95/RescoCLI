@@ -17,13 +17,13 @@ namespace RescoCLI.Tasks
     [Command(Name = "rc", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
     [Subcommand(typeof(ConnectionsCmd), typeof(ProjectsCmd), typeof(CodeCmd), typeof(PluginCmd), typeof(OfflineHTMLCmd), typeof(WorkflowLogsCmd))]
-    public class HARTBCmd : HARTBBase
+    public class RescoCLICmd : RescoCLIBase
     {
         [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "ConfigPath", Description = "Override the Config File Path (It will be updated in the app settings)", ValueName = "Config Path", ShowInHelpText = true)]
         [FileExists]
         public string ConfigFile { get; set; }
 
-        public HARTBCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public RescoCLICmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 
@@ -38,7 +38,7 @@ namespace RescoCLI.Tasks
         }
 
         private static string GetVersion()
-            => typeof(HARTBCmd).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            => typeof(RescoCLICmd).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
     }
 
 }

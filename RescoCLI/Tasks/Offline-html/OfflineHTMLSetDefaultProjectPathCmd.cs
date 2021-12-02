@@ -18,13 +18,13 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "set-default-project-path", Description = "Set the path of the default project currently working on", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [Subcommand(typeof(ExportProjectCmd), typeof(ImportProjectCmd), typeof(SetDefaultProjectCmd))]
-    class OfflineHTMLSetDefaultProjectPathCmd : HARTBBase
+    class OfflineHTMLSetDefaultProjectPathCmd : RescoCLIBase
     {
 
         [Option(CommandOptionType.SingleValue, ShortName = "p", LongName = "path", Description = "The path of the default project form libraries", ValueName = "project id", ShowInHelpText = true)]
         public string FolderPath { get; set; }
 
-        public OfflineHTMLSetDefaultProjectPathCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public OfflineHTMLSetDefaultProjectPathCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
         }

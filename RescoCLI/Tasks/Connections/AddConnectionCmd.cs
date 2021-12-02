@@ -16,7 +16,7 @@ namespace RescoCLI.Tasks
 
 
     [Command(Name = "add", Description = "Add new connection", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    class AddConnectionCmd : HARTBBase
+    class AddConnectionCmd : RescoCLIBase
     {
 
         [Option(CommandOptionType.SingleValue, ShortName = "u", LongName = "username", Description = "Resco login username", ValueName = "login username", ShowInHelpText = true)]
@@ -30,7 +30,7 @@ namespace RescoCLI.Tasks
         [Option(CommandOptionType.NoValue, ShortName = "s", LongName = "Selected", Description = "is this connection selected", ValueName = "is selected", ShowInHelpText = true)]
         public bool Selected { get; set; } = false;
 
-        public AddConnectionCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public AddConnectionCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

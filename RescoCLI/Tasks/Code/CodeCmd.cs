@@ -13,9 +13,9 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "code", Description = "Create classes for entities in C# or TS", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [Subcommand(typeof(CSharpGeneratorUtilCmd), typeof(TSGeneratorUtil))]
-    class CodeCmd : HARTBBase
+    class CodeCmd : RescoCLIBase
     {
-        public CodeCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public CodeCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

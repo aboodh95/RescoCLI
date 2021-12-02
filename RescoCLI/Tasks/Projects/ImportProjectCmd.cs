@@ -16,7 +16,7 @@ using System.Net;
 namespace RescoCLI.Tasks
 {
     [Command(Name = "import", Description = "Import woodford project to Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public class ImportProjectCmd : HARTBBase
+    public class ImportProjectCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
 
@@ -26,7 +26,7 @@ namespace RescoCLI.Tasks
         public string ProjectPath { get; set; }
         [Option(CommandOptionType.NoValue, ShortName = "publish", LongName = "publish", Description = "Publish the project", ValueName = "publish", ShowInHelpText = true)]
         public bool Publish { get; set; } = false;
-        public ImportProjectCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public ImportProjectCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

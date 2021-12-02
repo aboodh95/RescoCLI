@@ -13,9 +13,9 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "connections", Description = "Manage the connections to Resco cloud server", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [Subcommand(typeof(AddConnectionCmd), typeof(RemoveConnectionCmd))]
-    class ConnectionsCmd : HARTBBase
+    class ConnectionsCmd : RescoCLIBase
     {
-        public ConnectionsCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public ConnectionsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 

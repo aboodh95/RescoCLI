@@ -21,7 +21,7 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "logs", Description = "Manage the recent workflow logs", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [Subcommand(typeof(OpenWorkflowLogsCmd))]
-    class WorkflowLogsCmd : HARTBBase
+    class WorkflowLogsCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
 
@@ -29,7 +29,7 @@ namespace RescoCLI.Tasks
         [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "count", Description = "The count of the logs to retrieve", ValueName = "Count", ShowInHelpText = true)]
         public int Count { get; set; } = 10;
 
-        public WorkflowLogsCmd(ILogger<HARTBCmd> logger, IConsole console)
+        public WorkflowLogsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 
