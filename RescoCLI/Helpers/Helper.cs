@@ -14,8 +14,6 @@ namespace RescoCLI
     {
 		public static async Task<string> ExportProjectAsync(this DataService dataService ,string id)
 		{
-			Console.WriteLine("Attach Debugger");
-			Console.Read();
 			var ZIP_PATH = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
 			var client = new RestClient($"{dataService.Url}/rest/v1/data/ExportProject?$id={id}")
 			{
@@ -46,6 +44,10 @@ namespace RescoCLI
 			request.AddParameter("application/zip", data, ParameterType.RequestBody);
 			request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(AuthorizationToken))}");
 			var resporces = await client.ExecuteAsync(request);
+            if (resporces.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+				throw new Exception(resporces.Content);
+            }
 		}
 	}
 }

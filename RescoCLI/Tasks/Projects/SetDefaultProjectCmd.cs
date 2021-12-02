@@ -8,13 +8,13 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System.Linq;
 using System.IO.Compression;
 
 namespace RescoCLI.Tasks
 {
-    [Command(Name = "set-default",Description ="Set the id of the default woodford project", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    [Command(Name = "set-default", Description = "Set the id of the default woodford project", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     public class SetDefaultProjectCmd : HARTBBase
     {
 
@@ -24,8 +24,8 @@ namespace RescoCLI.Tasks
         public SetDefaultProjectCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
 
-            _logger = logger;
-            _console = console;
+
+
 
         }
 
@@ -37,12 +37,12 @@ namespace RescoCLI.Tasks
                 return 0;
             }
             var configuration = Configuration.GetConfigrationAsync().Result;
-            configuration.SelectedProjectId = ProjectId;
-           await configuration.SaveConfigurationAsync();
+            configuration.OfflineHTMLConfiguration.SelectedProjectId = ProjectId;
+            await configuration.SaveConfigurationAsync();
 
             return 0;
         }
 
-        
+
     }
 }

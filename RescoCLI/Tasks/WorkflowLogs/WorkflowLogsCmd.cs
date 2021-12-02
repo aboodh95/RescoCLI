@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
-   
+
 
     [Command(Name = "logs", Description = "Manage the recent workflow logs", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [Subcommand(typeof(OpenWorkflowLogsCmd))]
@@ -29,10 +29,10 @@ namespace RescoCLI.Tasks
         [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "count", Description = "The count of the logs to retrieve", ValueName = "Count", ShowInHelpText = true)]
         public int Count { get; set; } = 10;
 
-        public WorkflowLogsCmd(ILogger<HARTBCmd> logger, IConsole console) 
+        public WorkflowLogsCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
@@ -62,7 +62,7 @@ namespace RescoCLI.Tasks
             fetch.Entity.OrderBy("startedon", true);
             fetch.Count = Count;
 
-           var Logs =  _service.Fetch(fetch).Entities;
+            var Logs = _service.Fetch(fetch).Entities;
 
             int index = 0;
             DataTable LogsTable = new();
@@ -72,7 +72,7 @@ namespace RescoCLI.Tasks
             LogsTable.Columns.Add("StartedOn", typeof(DateTime));
             LogsTable.Columns.Add("CompledtedOn", typeof(DateTime));
 
-            Logs.ForEach(x => LogsTable.Rows.Add(index++, x["name"], x["statuscode"].ToString(),x["startedon"], x["completedon"]));
+            Logs.ForEach(x => LogsTable.Rows.Add(index++, x["name"], x["statuscode"].ToString(), x["startedon"], x["completedon"]));
 
             LogsTable.Print("Index", "Name", "Status", "StartedOn", "CompledtedOn");
             var folderPath = Path.Combine(Path.GetTempPath(), "RescoCLI Workflow Logs");
@@ -82,7 +82,7 @@ namespace RescoCLI.Tasks
                 Directory.CreateDirectory(folderPath);
             }
             var jsonString = JsonConvert.SerializeObject(Logs);
-            await File.WriteAllTextAsync(Path.Combine(folderPath, $"{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.json"),jsonString);
+            await File.WriteAllTextAsync(Path.Combine(folderPath, $"{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.json"), jsonString);
 
             return 0;
         }

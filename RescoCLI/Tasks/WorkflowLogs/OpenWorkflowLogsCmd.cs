@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Resco.Cloud.Client.Data;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
-   
+
 
     [Command(Name = "open", Description = "Open the logs as per the last loading of the logs", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     class OpenWorkflowLogsCmd : HARTBBase
@@ -25,12 +25,12 @@ namespace RescoCLI.Tasks
 
 
         [Option(CommandOptionType.SingleValue, ShortName = "i", LongName = "index", Description = "The index of the logs to open", ValueName = "Index", ShowInHelpText = true)]
-        public int Index { get; set; } 
+        public int Index { get; set; }
 
         public OpenWorkflowLogsCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
@@ -47,7 +47,7 @@ namespace RescoCLI.Tasks
                 Console.WriteLine("No logs was founded, please run the 'rc logs' command first");
                 return 0;
             }
-            var Logs = JsonConvert.DeserializeObject<List<DynamicEntity>>(await File.ReadAllTextAsync(file));
+            var Logs = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(await File.ReadAllTextAsync(file));
             var log = Logs.ElementAtOrDefault(Index);
             if (log != null)
             {

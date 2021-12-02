@@ -1,7 +1,7 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace RescoCLI.Tasks
 {
-  
 
-    [Command(Name = "add", Description ="Add new connection", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+
+    [Command(Name = "add", Description = "Add new connection", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     class AddConnectionCmd : HARTBBase
     {
-    
+
         [Option(CommandOptionType.SingleValue, ShortName = "u", LongName = "username", Description = "Resco login username", ValueName = "login username", ShowInHelpText = true)]
         public string Username { get; set; }
         [Option(CommandOptionType.SingleValue, ShortName = "url", LongName = "url", Description = "Resco login url", ValueName = "login url", ShowInHelpText = true)]
@@ -27,13 +27,13 @@ namespace RescoCLI.Tasks
         [Option(CommandOptionType.SingleValue, ShortName = "p", LongName = "password", Description = "Resco login password", ValueName = "login password", ShowInHelpText = true)]
         public string Password { get; set; }
 
-        [Option(CommandOptionType.NoValue, ShortName =  "s", LongName = "Selected", Description = "is this connection selected", ValueName = "is selected", ShowInHelpText = true)]
+        [Option(CommandOptionType.NoValue, ShortName = "s", LongName = "Selected", Description = "is this connection selected", ValueName = "is selected", ShowInHelpText = true)]
         public bool Selected { get; set; } = false;
 
         public AddConnectionCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
@@ -61,7 +61,7 @@ namespace RescoCLI.Tasks
                     Console.WriteLine("Missing URL, Adding new Connection require URL");
                     return 0;
                 }
-            
+
                 if (string.IsNullOrEmpty(Password))
                 {
                     Console.WriteLine("Missing Password, Adding new Connection require Password");

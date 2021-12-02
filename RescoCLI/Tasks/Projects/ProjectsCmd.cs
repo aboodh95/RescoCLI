@@ -4,7 +4,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +16,15 @@ using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
 
-    [Command(Name = "projects",Description ="Manage woodford Projects in Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-   [Subcommand(typeof(ExportProjectCmd),typeof(ImportProjectCmd),typeof(SetDefaultProjectCmd))]
+    [Command(Name = "projects", Description = "Manage woodford Projects in Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    [Subcommand(typeof(ExportProjectCmd), typeof(ImportProjectCmd), typeof(SetDefaultProjectCmd))]
     class ProjectsCmd : HARTBBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
         public ProjectsCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
 
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
@@ -36,7 +36,7 @@ namespace RescoCLI.Tasks
             {
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
-            
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
@@ -49,8 +49,8 @@ namespace RescoCLI.Tasks
             fetch.Entity.AddAttribute("resco_parents");
             fetch.Entity.OrderBy("createdon", false);
 
-            var projects =  _service.Fetch(fetch).Entities;
-            
+            var projects = _service.Fetch(fetch).Entities;
+
             foreach (var item in projects)
             {
                 Console.WriteLine($"Id: {item["id"]}");

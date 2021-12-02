@@ -8,15 +8,16 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System.Linq;
 using System.IO.Compression;
 using RestSharp;
 using System.Net;
+using RescoCLI.Helpers;
 
 namespace RescoCLI.Tasks
 {
-    [Command(Name = "plugin",Description ="Update the plugin dll from local file", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    [Command(Name = "plugin", Description = "Update the plugin dll from local file", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     public class PluginCmd : HARTBBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
@@ -27,9 +28,9 @@ namespace RescoCLI.Tasks
         public PluginCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
 
-            _logger = logger;
-            _console = console;
-            var configuration =  Configuration.GetConfigrationAsync().Result;
+
+
+            var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
             {
@@ -45,8 +46,6 @@ namespace RescoCLI.Tasks
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
 
-            Console.WriteLine("Attach Debugger");
-            Console.Read();
             var configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (!CheckIfDLLExist())

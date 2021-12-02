@@ -8,15 +8,15 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System.Linq;
 using System.IO.Compression;
 using System.Net;
 
 namespace RescoCLI.Tasks
 {
-    [Command(Name = "update",Description ="Update the project form libraries code from the solution code base", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    public  class OfflineHTMLUpadetorCmd : HARTBBase
+    [Command(Name = "update", Description = "Update the project form libraries code from the solution code base", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    public class OfflineHTMLUpadetorCmd : HARTBBase
     {
 
         [Option(CommandOptionType.NoValue, ShortName = "d", LongName = "isDevlopment", Description = "Pushing To Development", ValueName = "isDevlopment", ShowInHelpText = true)]
@@ -24,8 +24,8 @@ namespace RescoCLI.Tasks
 
         public OfflineHTMLUpadetorCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
 
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
@@ -40,7 +40,7 @@ namespace RescoCLI.Tasks
         {
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.SelectedProjectId, configuration.ActiveProjectFormLibrariesPath, isDevlopment);
+            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, isDevlopment);
             return 0;
         }
 
@@ -53,13 +53,13 @@ namespace RescoCLI.Tasks
             var zipFilePath = await dataService.ExportProjectAsync(projectId);
             var zipFile = ZipFile.Open(zipFilePath, ZipArchiveMode.Update);
 
-            var zipFolderPath = zipFilePath.Replace(".zip","");
+            var zipFolderPath = zipFilePath.Replace(".zip", "");
             var distPath = Path.Combine(zipFolderPath, "www", "ha", "dist");
             zipFile.ExtractToDirectory(zipFolderPath);
 
             if (Directory.Exists(distPath))
             {
-                Directory.Delete(distPath,true);
+                Directory.Delete(distPath, true);
             }
             Directory.CreateDirectory(distPath);
 
@@ -73,7 +73,7 @@ namespace RescoCLI.Tasks
             var newZipPath = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
 
             ZipFile.CreateFromDirectory(zipFolderPath, newZipPath);
-            await dataService.ImportProjectAsync( projectId, true, newZipPath);
+            await dataService.ImportProjectAsync(projectId, true, newZipPath);
         }
 
     }

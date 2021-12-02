@@ -14,12 +14,10 @@ using System.Xml.Xsl;
 
 namespace RescoCLI
 {
-   
+
     [HelpOption("--help")]
     public abstract class HARTBBase
     {
-        protected ILogger _logger;
-        protected IConsole _console;
         public HARTBBase()
         {
         }
@@ -27,8 +25,6 @@ namespace RescoCLI
         {
             return Task.FromResult(0);
         }
-
-     
 
         protected String SecureStringToString(SecureString value)
         {
@@ -44,21 +40,19 @@ namespace RescoCLI
             }
         }
 
-     
+
         protected void OnException(Exception ex)
         {
             OutputError(ex.Message);
-            _logger.LogError(ex.Message);
-            _logger.LogDebug(ex, ex.Message);
         }
 
 
         protected void OutputError(string message)
         {
-            _console.BackgroundColor = ConsoleColor.Red;
-            _console.ForegroundColor = ConsoleColor.White;
-            _console.Error.WriteLine(message);
-            _console.ResetColor();
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
     }
 }

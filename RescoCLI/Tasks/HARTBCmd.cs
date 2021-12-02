@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,7 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "rc", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
-    [Subcommand(typeof(ConnectionsCmd),  typeof(ProjectsCmd), typeof(CodeCmd),typeof(PluginCmd),typeof(OfflineHTMLCmd),typeof(WorkflowLogsCmd))]
+    [Subcommand(typeof(ConnectionsCmd), typeof(ProjectsCmd), typeof(CodeCmd), typeof(PluginCmd), typeof(OfflineHTMLCmd), typeof(WorkflowLogsCmd))]
     public class HARTBCmd : HARTBBase
     {
         [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "ConfigPath", Description = "Override the Config File Path (It will be updated in the app settings)", ValueName = "Config Path", ShowInHelpText = true)]
@@ -25,9 +25,9 @@ namespace RescoCLI.Tasks
 
         public HARTBCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
-          
+
+
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

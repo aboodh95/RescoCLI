@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RescoCLI.Helpers
+namespace RescoCLI.Configurations
 {
     public class Configuration
     {
@@ -13,14 +13,26 @@ namespace RescoCLI.Helpers
         {
             Connections = new List<Connection>();
         }
+        /// <summary>
+        /// The path of the configuration folder
+        /// </summary>
         public static string ConfigurationFolderPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RescoCLI");
+        /// <summary>
+        /// The path of the configuration file
+        /// </summary>
         public static string ConfigurationFilePath { get; set; } = Path.Combine(ConfigurationFolderPath, "RescoCLI.json");
-        public List<Connection> Connections { get; set; }
-        public string SelectedProjectId { get; set; }
+        /// <summary>
+        /// Save the Configuration File
+        /// </summary>
+        /// <returns></returns>
         public async Task SaveConfigurationAsync()
         {
             await File.WriteAllTextAsync(ConfigurationFilePath, JsonConvert.SerializeObject(this));
         }
+        /// <summary>
+        /// Get the Configuration File
+        /// </summary>
+        /// <returns>Configuration File</returns>
         public static async Task<Configuration> GetConfigrationAsync()
         {
             Configuration _configuration = null;
@@ -30,8 +42,11 @@ namespace RescoCLI.Helpers
                 {
                     Directory.CreateDirectory(Configuration.ConfigurationFolderPath);
                 }
-
-                 _configuration = new Configuration();
+                _configuration = new Configuration
+                {
+                    OfflineHTMLConfiguration = new OfflineHTMLConfiguration(),
+                    CodeGenerationConfiguration=  new CodeGenerationConfiguration(),
+                };
                 await _configuration.SaveConfigurationAsync();
             }
             else
@@ -40,13 +55,18 @@ namespace RescoCLI.Helpers
             }
             return _configuration;
         }
-
-        public string CSharpEntitiesFolderPath { get; set; }
-        public string TSEntitiesFolderPath { get; set; }
         /// <summary>
-        /// Active Project Form Libraries Path
+        /// List of all Connections
         /// </summary>
-        public string ActiveProjectFormLibrariesPath { get; set; }
+        public List<Connection> Connections { get; set; }
+        /// <summary>
+        /// The Configuration for Code Generation Command
+        /// </summary>
+        public CodeGenerationConfiguration CodeGenerationConfiguration { get; set; }
+        /// <summary>
+        /// The Configuration for the Offline HTML commands
+        /// </summary>
+        public OfflineHTMLConfiguration OfflineHTMLConfiguration { get; set; }
 
     }
 }

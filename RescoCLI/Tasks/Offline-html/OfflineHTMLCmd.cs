@@ -4,7 +4,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.WebService;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +16,15 @@ using System.Threading.Tasks;
 namespace RescoCLI.Tasks
 {
 
-    [Command(Name = "offline-html",Description ="Manage all Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-   [Subcommand(typeof(OfflineHTML_SetDefaultProjectPathCmd),typeof(OfflineHTMLUpadetorCmd))]
+    [Command(Name = "offline-html", Description = "Manage all Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    [Subcommand(typeof(OfflineHTMLSetDefaultProjectPathCmd), typeof(OfflineHTMLUpadetorCmd))]
     class OfflineHTMLCmd : HARTBBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
         public OfflineHTMLCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
-            _logger = logger;
-            _console = console;
+
+
 
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
@@ -32,7 +32,7 @@ namespace RescoCLI.Tasks
             {
                 throw new Exception("No connection do exists");
             }
-            if (string.IsNullOrEmpty(configuration.SelectedProjectId))
+            if (string.IsNullOrEmpty(configuration.OfflineHTMLConfiguration.SelectedProjectId))
             {
                 throw new Exception("Default Project is not selected");
             }
@@ -40,7 +40,7 @@ namespace RescoCLI.Tasks
             {
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
-            
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

@@ -8,14 +8,14 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System.Linq;
 using System.IO.Compression;
 using System.Net;
 
 namespace RescoCLI.Tasks
 {
-    [Command(Name = "import", Description ="Import woodford project to Resco cloud",OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    [Command(Name = "import", Description = "Import woodford project to Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     public class ImportProjectCmd : HARTBBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
@@ -29,9 +29,9 @@ namespace RescoCLI.Tasks
         public ImportProjectCmd(ILogger<HARTBCmd> logger, IConsole console)
         {
 
-            _logger = logger;
-            _console = console;
-            var configuration =  Configuration.GetConfigrationAsync().Result;
+
+
+            var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
             {
@@ -41,7 +41,7 @@ namespace RescoCLI.Tasks
             {
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
-            
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

@@ -14,7 +14,7 @@ using System.Collections.ObjectModel;
 using System.Net;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
-using RescoCLI.Helpers;
+using RescoCLI.Configurations;
 using System.Threading.Tasks;
 
 namespace RescoCLI.Tasks
@@ -27,8 +27,8 @@ namespace RescoCLI.Tasks
         public TSGeneratorUtil(ILogger<HARTBCmd> logger, IConsole console)
         {
 
-            _logger = logger;
-            _console = console;
+
+
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
@@ -43,7 +43,7 @@ namespace RescoCLI.Tasks
             Configuration configuration = await Configuration.GetConfigrationAsync();
             if (string.IsNullOrEmpty(FolderPath))
             {
-                FolderPath = configuration.TSEntitiesFolderPath;
+                FolderPath = configuration.CodeGenerationConfiguration.TSEntitiesFolderPath;
             }
             if (!Directory.Exists(FolderPath))
             {
@@ -71,10 +71,14 @@ namespace RescoCLI.Tasks
             entities.AddRange(metadataService.RetrieveEntities());
 
             var localizations = GetLocalization(dataService);
+            var MetadataTypesFile = @"export class MetadataTypes {
+                                        public static Types = {}
+                                    }";
             foreach (var entity in entities)
             {
                 var displayName = entity.Name;
                 var classString = $@"import {{Entity, EntityReference }} from ""../Types"";
+                                     import {{ MetadataTypes }} from ""./MetadataTypes"";
                 export class {displayName} extends Entity
 						{{
                              constructor() {{
@@ -89,7 +93,7 @@ namespace RescoCLI.Tasks
                 }
                 classString += "}\n";
                 classString += $@"
-		        entityLogicalName = ""{entity.Name}"";
+		        public static entityLogicalName = ""{entity.Name}"";
 		        primaryIdAttribute = ""{entity.PrimaryKeyName}"";
 		        primaryNameAttribute = ""{entity.PrimaryFieldName}"";";
                 HashSet<string> Imports = new HashSet<string>();
@@ -174,13 +178,17 @@ namespace RescoCLI.Tasks
                     }
                 }
                 classString += @"}";
+                classString += $@"
+                MetadataTypes.Types['{entity.Name}'] = new {entity.Name}();
+";
                 if (Imports.Count != 0)
                 {
                     classString = $@"import {{{ string.Join(", ", Imports)}}} from ""./OptionSets"";
-{classString}";
+                                    {classString}";
                 }
                 File.WriteAllText(Path.Combine(folderName, $"{displayName}.ts"), classString);
             }
+
             var optionSetFile = @"";
             foreach (var item in optionSets)
             {
@@ -201,6 +209,7 @@ namespace RescoCLI.Tasks
 
             }
             optionSetFile += "\n";
+            File.WriteAllText(Path.Combine(folderName, "MetadataTypes.ts"), MetadataTypesFile);
             File.WriteAllText(Path.Combine(folderName, "OptionSets.ts"), optionSetFile);
         }
 
