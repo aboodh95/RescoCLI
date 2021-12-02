@@ -36,7 +36,7 @@ namespace RescoCLI.Tasks
                 Console.WriteLine("Project Id or Name should be passed");
                 return 0;
             }
-            var configuration = Configuration.GetConfigrationAsync().Result;
+            var configuration = await Configuration.GetConfigrationAsync();
             configuration.OfflineHTMLConfiguration.SelectedProjectId = ProjectId;
             await configuration.SaveConfigurationAsync();
 

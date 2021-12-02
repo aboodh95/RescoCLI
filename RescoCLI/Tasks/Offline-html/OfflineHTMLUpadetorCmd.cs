@@ -38,13 +38,13 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            var configuration = Configuration.GetConfigrationAsync().Result;
+            var configuration =await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, isDevlopment);
+            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevlopment);
             return 0;
         }
 
-        public async Task PushFormLibraries(string url, NetworkCredential networkCredential, string projectId, string folderPath, bool isDevlopment)
+        public async Task PushFormLibraries(string url, NetworkCredential networkCredential, string projectId, string folderPath, string folderName, bool isDevlopment)
         {
             var dataService = new Resco.Cloud.Client.WebService.DataService(url)
             {
@@ -54,7 +54,7 @@ namespace RescoCLI.Tasks
             var zipFile = ZipFile.Open(zipFilePath, ZipArchiveMode.Update);
 
             var zipFolderPath = zipFilePath.Replace(".zip", "");
-            var distPath = Path.Combine(zipFolderPath, "www", "ha", "dist");
+            var distPath = Path.Combine(zipFolderPath, "www", folderName);
             zipFile.ExtractToDirectory(zipFolderPath);
 
             if (Directory.Exists(distPath))
@@ -67,7 +67,7 @@ namespace RescoCLI.Tasks
             var files = Directory.GetFiles(folderPath);
             foreach (var item in files)
             {
-                FileInfo fileInfo = new FileInfo(item);
+                FileInfo fileInfo = new(item);
                 File.Copy(item, Path.Combine(distPath, fileInfo.Name));
             }
             var newZipPath = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
