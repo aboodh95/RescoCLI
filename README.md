@@ -47,8 +47,7 @@ rc logs
 
 ## Version History
 
-- 0.1
-- Initial Release
+- 1.0.0.0  - Initial Release
 
 ## License
 
