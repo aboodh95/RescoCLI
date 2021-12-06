@@ -19,14 +19,9 @@ namespace RescoCLI.Tasks
     [Subcommand(typeof(ConnectionsCmd), typeof(ProjectsCmd), typeof(CodeCmd), typeof(PluginCmd), typeof(OfflineHTMLCmd), typeof(WorkflowLogsCmd))]
     public class RescoCLICmd : RescoCLIBase
     {
-        [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "ConfigPath", Description = "Override the Config File Path (It will be updated in the app settings)", ValueName = "Config Path", ShowInHelpText = true)]
-        [FileExists]
-        public string ConfigFile { get; set; }
-
+      
         public RescoCLICmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-
-
 
         }
 
@@ -34,7 +29,6 @@ namespace RescoCLI.Tasks
         {
             app.ShowHelp();
             return await Task.FromResult(0);
-
         }
 
         private static string GetVersion()
