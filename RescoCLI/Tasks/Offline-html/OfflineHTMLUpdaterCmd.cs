@@ -59,19 +59,33 @@ namespace RescoCLI.Tasks
                 Directory.Delete(distPath, true);
             }
             Directory.CreateDirectory(distPath);
-
-
-            var files = Directory.GetFiles(folderPath);
-            foreach (var item in files)
-            {
-                FileInfo fileInfo = new(item);
-                File.Copy(item, Path.Combine(distPath, fileInfo.Name));
-            }
+           
+            CopyFoldersAndFiles(folderPath, distPath);
             var newZipPath = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
 
             ZipFile.CreateFromDirectory(zipFolderPath, newZipPath);
             await dataService.ImportProjectAsync(projectId, true, newZipPath);
         }
 
+        private void CopyFoldersAndFiles(string folderPath, string distPath)
+        {
+            var files = Directory.GetFiles(folderPath);
+            var folders = Directory.GetDirectories(folderPath);
+            foreach (var item in files)
+            {
+                FileInfo fileInfo = new(item);
+                File.Copy(item, Path.Combine(distPath, fileInfo.Name));
+            }
+            foreach (var item in folders)
+            {
+                var folderName = item.Split('\\').Last();
+                var newFolderPath = Path.Combine(distPath, folderName);
+                if (!Directory.Exists(newFolderPath))
+                {
+                    Directory.CreateDirectory(newFolderPath);
+                }
+                CopyFoldersAndFiles(item, newFolderPath);
+            }
+        }
     }
 }
