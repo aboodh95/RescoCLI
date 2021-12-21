@@ -26,9 +26,6 @@ namespace RescoCLI.Tasks
         public string FolderPath { get; set; }
         public TSGeneratorUtil(ILogger<RescoCLICmd> logger, IConsole console)
         {
-
-
-
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
@@ -58,8 +55,6 @@ namespace RescoCLI.Tasks
 
         public static void Generat(string folderName, string url, NetworkCredential credentials)
         {
-
-
             var optionSets = new List<string>();
             var dataService = new Resco.Cloud.Client.WebService.DataService(url);
             dataService.Credentials = credentials;
@@ -192,18 +187,18 @@ namespace RescoCLI.Tasks
             var optionSetFile = @"";
             foreach (var item in optionSets)
             {
-                var options = localizations.Where(x => x.StartsWith($"{item}.")).Distinct().ToList();
+                var options = localizations.Where(x => x.Key.StartsWith($"{item}.")).Distinct().ToList();
                 optionSetFile += $@"export enum {item.Replace(".", "_")}{{";
                 var addedValues = new List<string>();
                 foreach (var option in options)
                 {
-                    var value = ClearDisplayName(option.Split('=')[1]);
+                    var value = ClearDisplayName(option.Value);
                     while (addedValues.Any(x => x == value))
                     {
                         value = $"_{value}";
                     }
                     addedValues.Add(value);
-                    optionSetFile += $"{value} = {option.Split('=')[0].Split('.')[2]},\n";
+                    optionSetFile += $"{value} = {option.Key.Split('=')[0].Split('.')[2]},\n";
                 }
                 optionSetFile += "}\n";
 
@@ -223,7 +218,7 @@ namespace RescoCLI.Tasks
             }
             return "";
         }
-        private static List<string> GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
+        private static Dictionary<string, string> GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
         {
             var fetch = new Fetch("mobilelocalization");
             fetch.Count = 500;
@@ -231,20 +226,26 @@ namespace RescoCLI.Tasks
             fetch.Entity.AddAttribute("localization");
             fetch.Entity.Filter = new Filter();
             fetch.Entity.Filter.Conditions = new List<Condition>();
-            fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "statuscode", Operator = "eq", Value = "1" });
             fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
+            fetch.Entity.OrderBy("createdon", false);
             var result = dataService.Fetch(fetch);
-            var localizations = result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            Dictionary<string, string> localizations = new Dictionary<string, string>();
 
-            fetch = new Fetch("mobilelocalization");
-            fetch.Count = 500;
-            fetch.Entity.AddAttribute("id");
-            fetch.Entity.AddAttribute("localization");
-            fetch.Entity.Filter = new Filter();
-            fetch.Entity.Filter.Conditions = new List<Condition>();
-            fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
-            result = dataService.Fetch(fetch);
-            localizations.AddRange(result.Entities.First()["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList());
+            foreach (var item in result.Entities)
+            {
+                var _localizations = item["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+                foreach (var _loc in _localizations)
+                {
+
+                    var key = _loc.Split('=')[0];
+                    var value = string.Concat(_loc.Split('=').Skip(1));
+                    localizations[key] = value;
+                }
+
+            }
+
+
+
             return localizations;
         }
 

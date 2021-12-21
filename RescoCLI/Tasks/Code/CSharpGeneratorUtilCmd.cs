@@ -71,17 +71,18 @@ namespace RescoCLI.Tasks
             Console.WriteLine($"Total Entities: {entities.Count}");
             foreach (var entity in entities)
             {
-                var displayName = entity.Name;
-                var targetUnit = new CodeCompileUnit();
+                string displayName = entity.Name;
+                CodeCompileUnit targetUnit = new CodeCompileUnit();
                 CodeNamespace codeNamespace = new CodeNamespace(_namespace);
                 codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
                 codeNamespace.Imports.Add(new CodeNamespaceImport("XRMServer.Data"));
                 codeNamespace.Imports.Add(new CodeNamespaceImport("HA.Resco.Plugin"));
-                //codeNamespace.Imports.Add(new CodeNamespaceImport("Resco.Cloud.Client.Data.Execute"));
-                var targetClass = new CodeTypeDeclaration(displayName);
-                targetClass.IsClass = true;
-                targetClass.TypeAttributes = TypeAttributes.Public;
-                targetClass.BaseTypes.Add("IHAEntity");
+                CodeTypeDeclaration targetClass = new(displayName)
+                {
+                    IsClass = true,
+                    TypeAttributes = TypeAttributes.Public
+                };
+                targetClass.BaseTypes.Add("HAEntity");
 
                 CodeMemberField EntityLogicalNameField = new CodeMemberField
                 {
@@ -143,8 +144,8 @@ namespace RescoCLI.Tasks
                     codeMemberProperty.Name = attribute.Name;
                     codeMemberProperty.HasGet = true;
                     codeMemberProperty.HasSet = true;
-                    codeMemberProperty.Comments.Add(new CodeCommentStatement(AddSummary(attribute.Description)));
-
+                    codeMemberProperty.Comments.Add(new CodeCommentStatement(AddSummary(attribute.Description),true));
+                    
                     switch (attribute.Type)
                     {
                         case XrmType.UniqueIdentifier:
@@ -160,18 +161,18 @@ namespace RescoCLI.Tasks
                             break;
                         case XrmType.Float:
                             codeMemberProperty.Type = new CodeTypeReference(typeof(double?));
-                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<double>(\"{attribute.Name }\")")));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<double>>(\"{attribute.Name }\")")));
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         case XrmType.Money:
                         case XrmType.Decimal:
                             codeMemberProperty.Type = new CodeTypeReference(typeof(decimal?));
-                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<decimal>(\"{attribute.Name }\")")));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<decimal>>(\"{attribute.Name }\")")));
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         case XrmType.DateTime:
                             codeMemberProperty.Type = new CodeTypeReference(typeof(DateTime?));
-                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<DateTime>(\"{attribute.Name }\")")));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<DateTime>>(\"{attribute.Name }\")")));
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         case XrmType.Picklist:
@@ -188,7 +189,7 @@ namespace RescoCLI.Tasks
                             break;
                         case XrmType.Boolean:
                             codeMemberProperty.Type = new CodeTypeReference(typeof(bool?));
-                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<bool>(\"{attribute.Name }\")")));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<bool>>(\"{attribute.Name }\")")));
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         case XrmType.Lookup:
@@ -199,10 +200,14 @@ namespace RescoCLI.Tasks
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         case XrmType.Integer:
+                            codeMemberProperty.Type = new CodeTypeReference(typeof(int?));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<int>>(\"{attribute.Name }\")")));
+                            codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
+                            break;
                         case XrmType.BigInt:
                         case XrmType.RowVersion:
                             codeMemberProperty.Type = new CodeTypeReference(typeof(long?));
-                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<long>(\"{attribute.Name }\")")));
+                            codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"GetPropertyValue<System.Nullable<long>>(\"{attribute.Name }\")")));
                             codeMemberProperty.SetStatements.Add(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), $"Add(\"{attribute.Name }\", value)"));
                             break;
                         default:
@@ -272,9 +277,9 @@ namespace RescoCLI.Tasks
         {
             if (!string.IsNullOrEmpty(summary))
             {
-                return $@"/// <summary>
-		/// {summary}
-		/// </summary>";
+                return $@"<summary>
+{summary}
+</summary>";
             }
             return "";
         }
