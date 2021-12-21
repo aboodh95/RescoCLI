@@ -28,8 +28,6 @@ namespace RescoCLI.Tasks
         public PluginCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
-
-
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
@@ -50,7 +48,11 @@ namespace RescoCLI.Tasks
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (!CheckIfDLLExist())
             {
-                throw new FileNotFoundException();
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Cannot find DLL file with the provided path");
+                Console.ForegroundColor = color;
+                return 1;
             }
 
             FileInfo fileInfo = new(DllPath);
@@ -87,6 +89,7 @@ namespace RescoCLI.Tasks
         }
         private bool CheckIfDLLExist()
         {
+            DllPath ??= "";
             if (!File.Exists(DllPath))
             {
                 var folder = Environment.CurrentDirectory;
