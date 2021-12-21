@@ -37,16 +37,19 @@ namespace RescoCLI.Tasks
         {
             var configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            await PushFormLibraries(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevelopment);
+            await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevelopment);
             return 0;
         }
 
-        public async Task PushFormLibraries(string url, NetworkCredential networkCredential, string projectId, string folderPath, string folderName, bool isDevelopment)
+        public async Task PushFiles(string url, NetworkCredential networkCredential, string projectId, string folderPath, string folderName, bool isDevelopment)
         {
+            Spinner spinner = new Spinner();
+            spinner.Start();
             var dataService = new Resco.Cloud.Client.WebService.DataService(url)
             {
                 Credentials = networkCredential
             };
+            Console.WriteLine("Exporting Project...");
             var zipFilePath = await dataService.ExportProjectAsync(projectId);
             var zipFile = ZipFile.Open(zipFilePath, ZipArchiveMode.Update);
 
@@ -59,12 +62,13 @@ namespace RescoCLI.Tasks
                 Directory.Delete(distPath, true);
             }
             Directory.CreateDirectory(distPath);
-           
+            Console.WriteLine("Updating Fiels...");
             CopyFoldersAndFiles(folderPath, distPath);
             var newZipPath = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
-
             ZipFile.CreateFromDirectory(zipFolderPath, newZipPath);
+            Console.WriteLine("Importing Project...");
             await dataService.ImportProjectAsync(projectId, true, newZipPath);
+            spinner.Stop();
         }
 
         private void CopyFoldersAndFiles(string folderPath, string distPath)
