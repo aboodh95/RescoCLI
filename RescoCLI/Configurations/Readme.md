@@ -24,8 +24,10 @@ This file is created to host the configuration for running the CLI and to not re
         //The path where the ts Classes will be created
         "TSEntitiesFolderPath": "FolderPath"
     },
-    //Offline HTML Configuration
-    "OfflineHTMLConfiguration": {
+    //Offline HTML Configurations
+    //Array of configuration that you can select to update the you can select to push the changes
+    "OfflineHTMLConfigurations": [
+        {
         //The path where your JS & HTML files are stored
         "FolderPath": "FolderPath",
         //The selected project id where to push these files to it
@@ -33,6 +35,7 @@ This file is created to host the configuration for running the CLI and to not re
         //The name of the folder that will be created inside the Offline HTML zip file (Read more about it in Offline HTML Readme)
         "FolderName": "FormLibraries"
     }
+    ]
 }
 ```
 

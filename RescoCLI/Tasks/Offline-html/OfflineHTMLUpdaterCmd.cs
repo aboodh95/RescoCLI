@@ -21,6 +21,8 @@ namespace RescoCLI.Tasks
 
         [Option(CommandOptionType.NoValue, ShortName = "d", LongName = "isDevelopment", Description = "Pushing To Development", ValueName = "isDevelopment", ShowInHelpText = true)]
         public bool isDevelopment { get; set; } = true;
+        [Option(CommandOptionType.SingleValue, ShortName = "i", LongName = "ProjectIndex", Description = "The index of project configuration", ValueName = "ProjectIndex", ShowInHelpText = true)]
+        public int projectIndex { get; set; }
 
         public OfflineHTMLUpdaterCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
@@ -36,8 +38,14 @@ namespace RescoCLI.Tasks
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
             var configuration = await Configuration.GetConfigrationAsync();
+            OfflineHTMLConfiguration offlineHTMLConfiguration = configuration.OfflineHTMLConfigurations.ElementAtOrDefault(projectIndex);
+            if (offlineHTMLConfiguration == null)
+            {
+                throw new Exception($"Configuration with index: {projectIndex} doesn't exists");
+            }
+
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), configuration.OfflineHTMLConfiguration.SelectedProjectId, configuration.OfflineHTMLConfiguration.FolderPath, configuration.OfflineHTMLConfiguration.FolderName, isDevelopment);
+            await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), offlineHTMLConfiguration.SelectedProjectId, offlineHTMLConfiguration.FolderPath, offlineHTMLConfiguration.FolderName, isDevelopment);
             return 0;
         }
 

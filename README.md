@@ -22,12 +22,11 @@ So far, the tool has these set of commands <br />
 | Projects     |                          | Manage the Woodford Projects                                                                                                     |
 |              | Export                   | Export Woodford Project                                                                                                          |
 |              | Import                   | Import Woodford Project                                                                                                          |
-|              | Set-Default-Project      | Set the default project you are currently working on (For the Offline-HTML Command)                                              |
 | logs         |                          | Display list of recent logs (default 10)                                                                                         |
 |              | open                     | Open the logs as per the last loading of the logs                                                                                |
 | Offline-html |                          | Manage the Offline HTML File                                                                                                     |
-|              | update                   | Push the offline html files to the selected woodford project (Please read [Offline-HTML](RescoCLI/Tasks/Offline-html/Readme.md)) |
-|              | set-default-project-path | Set the path of the folder that have all the offline-html you are working on                                                     |
+|              | update                   | Push the offline html files to the selected woodford project by index(Please read [Offline-HTML](RescoCLI/Tasks/Offline-html/Readme.md)) |
+
 
 ### Executing program
 

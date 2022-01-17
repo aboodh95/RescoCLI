@@ -17,7 +17,7 @@ namespace RescoCLI.Tasks
 {
 
     [Command(Name = "offline-html", Description = "Manage all Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand(typeof(OfflineHTMLSetDefaultProjectPathCmd), typeof(OfflineHTMLUpdaterCmd))]
+    [Subcommand( typeof(OfflineHTMLUpdaterCmd))]
     class OfflineHTMLCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
@@ -32,7 +32,7 @@ namespace RescoCLI.Tasks
             {
                 throw new Exception("No connection do exists");
             }
-            if (string.IsNullOrEmpty(configuration.OfflineHTMLConfiguration.SelectedProjectId))
+            if (configuration.OfflineHTMLConfigurations.Count == 0)
             {
                 throw new Exception("Default Project is not selected");
             }

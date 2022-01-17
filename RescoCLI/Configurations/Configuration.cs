@@ -44,7 +44,7 @@ namespace RescoCLI.Configurations
                 }
                 _configuration = new Configuration
                 {
-                    OfflineHTMLConfiguration = new OfflineHTMLConfiguration(),
+                    OfflineHTMLConfigurations = new List<OfflineHTMLConfiguration>(),
                     CodeGenerationConfiguration=  new CodeGenerationConfiguration(),
                 };
                 await _configuration.SaveConfigurationAsync();
@@ -66,7 +66,7 @@ namespace RescoCLI.Configurations
         /// <summary>
         /// The Configuration for the Offline HTML commands
         /// </summary>
-        public OfflineHTMLConfiguration OfflineHTMLConfiguration { get; set; }
+        public List<OfflineHTMLConfiguration> OfflineHTMLConfigurations { get; set; }
 
     }
 }

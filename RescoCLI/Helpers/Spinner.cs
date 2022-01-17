@@ -47,10 +47,11 @@ namespace RescoCLI
 
         private void Draw(char c)
         {
+            var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(c);
             Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
-
+            Console.ForegroundColor = color;
         }
 
         private void Turn()
