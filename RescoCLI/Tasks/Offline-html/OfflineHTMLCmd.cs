@@ -36,15 +36,17 @@ namespace RescoCLI.Tasks
             {
                 throw new Exception("Default Project is not selected");
             }
-            _service = new Resco.Cloud.Client.WebService.DataService(selectedConnections.URL)
-            {
-                Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
-            };
-
+           
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            var configuration = await Configuration.GetConfigrationAsync();
+            for (int i = 0; i < configuration.OfflineHTMLConfigurations.Count; i++)
+            {
+                Console.WriteLine($"{i} - {configuration.OfflineHTMLConfigurations[i].FolderName}");
+            }
+
             return await Task.FromResult(0);
         }
 
