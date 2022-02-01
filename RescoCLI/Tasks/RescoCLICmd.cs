@@ -16,7 +16,7 @@ namespace RescoCLI.Tasks
 
     [Command(Name = "rc", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
-    [Subcommand(typeof(ConnectionsCmd), typeof(ProjectsCmd), typeof(CodeCmd), typeof(PluginCmd), typeof(OfflineHTMLCmd), typeof(WorkflowLogsCmd))]
+    [Subcommand(typeof(ConnectionsCmd), typeof(ProjectsCmd), typeof(CodeCmd), typeof(PluginCmd), typeof(OfflineHTMLCmd),typeof(LocalOfflineHTMLCmd), typeof(WorkflowLogsCmd))]
     public class RescoCLICmd : RescoCLIBase
     {
       

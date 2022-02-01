@@ -34,7 +34,9 @@ This file is created to host the configuration for running the CLI and to not re
         "SelectedProjectId": "df4c0729-XXXX-45c6-XXXX-4fff1b44bcee",
         //The name of the folder that will be created inside the Offline HTML zip file (Read more about it in Offline HTML Readme)
         "FolderName": "FormLibraries"
-    }
+    },
+    //The folder where you have pointed Resco to get the Offline HTML from it
+    "LocalOfflineHTMLFolder": "FolderPATH"
     ]
 }
 ```

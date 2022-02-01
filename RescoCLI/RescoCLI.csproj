@@ -33,7 +33,7 @@ It do provide set of commands that can accelerate the process of development</De
 
   <ItemGroup>
     <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\LICENSE">
       <Pack>True</Pack>

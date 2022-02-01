@@ -67,6 +67,9 @@ namespace RescoCLI.Configurations
         /// The Configuration for the Offline HTML commands
         /// </summary>
         public List<OfflineHTMLConfiguration> OfflineHTMLConfigurations { get; set; }
-
+        /// <summary>
+        /// The folder where you have pointed Resco to get the Offline HTML from it
+        /// </summary>
+        public string LocalOfflineHTMLFolder { get; set; }
     }
 }
