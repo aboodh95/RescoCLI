@@ -1,27 +1,26 @@
 ﻿
-
-using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Logging;
 using Resco.Cloud.Client.Data.Fetch;
-using Resco.Cloud.Client.WebService;
-using RescoCLI.Configurations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Text;
+using System.IO;
+
+using Microsoft.Extensions.Logging;
+using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
+using RescoCLI.Configurations;
+using System.Linq;
+using System.IO.Compression;
+using System.Net;
 
 namespace RescoCLI.Tasks
 {
-
-    [Command(Name = "projects", Description = "Manage woodford Projects in Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand(typeof(ExportProjectCmd), typeof(ImportProjectCmd), typeof(SetDefaultProjectCmd),typeof(ExportAllProjectsCmd))]
-    class ProjectsCmd : RescoCLIBase
+    [Command(Name = "export-all", Description = "Export Woodford Project from Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
+    public class ExportAllProjectsCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;
-        public ProjectsCmd(ILogger<RescoCLICmd> logger, IConsole console)
+
+        public ExportAllProjectsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
 
@@ -41,29 +40,28 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            var folder = System.AppDomain.CurrentDomain.BaseDirectory;
+            Spinner spinner = new Spinner();
+            spinner.Start();
+            var folder = Environment.CurrentDirectory;
             var fetch = new Fetch("mobileproject");
             fetch.Entity.AddAttribute("name");
             fetch.Entity.AddAttribute("id");
             fetch.Entity.AddAttribute("resco_appid");
-            fetch.Entity.AddAttribute("resco_parents");
-            fetch.Entity.OrderBy("createdon", false);
-
+            fetch.Entity.Filter = new Filter();
             var projects = _service.Fetch(fetch).Entities;
-
-            foreach (var item in projects)
+            foreach (var project in projects)
             {
-                Console.WriteLine($"Id: {item["id"]}");
-                Console.WriteLine($"Name: {item["name"]}");
-                if (item.HasValue("resco_parents"))
+                Console.WriteLine($"Exporting Projects: {project["name"]}");
+                var projectZipFile = await _service.ExportProjectAsync(project["id"].ToString());
+                var projectFolder = Path.Combine(folder, $"{project["name"]}");
+                if (!Directory.Exists(projectFolder))
                 {
-                    Console.WriteLine($"Parent: {item["resco_parents"]}");
+                    Directory.CreateDirectory(projectFolder);
                 }
-                Console.WriteLine("==========");
+                ZipFile.ExtractToDirectory(projectZipFile, projectFolder, true);
             }
-            return await Task.FromResult(0);
+            spinner.Stop(); 
+            return 0;
         }
-
     }
-
 }

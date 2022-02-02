@@ -52,6 +52,8 @@ namespace RescoCLI.Tasks
                 Console.WriteLine("Project Id or Name should be passed");
                 return 0;
             }
+            Spinner spinner = new Spinner();
+            spinner.Start();
             var folder = Environment.CurrentDirectory;
             var fetch = new Fetch("mobileproject");
             fetch.Entity.AddAttribute("name");
@@ -79,8 +81,9 @@ namespace RescoCLI.Tasks
                 {
                     Directory.CreateDirectory(projectFolder);
                 }
-                ZipFile.ExtractToDirectory(projectZipFile, projectFolder);
+                ZipFile.ExtractToDirectory(projectZipFile, projectFolder, true);
             }
+            spinner.Stop();
             return 0;
 
         }
