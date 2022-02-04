@@ -156,6 +156,17 @@ namespace RescoCLI.Tasks
 											  }}
 												";
                             break;
+                        case XrmType.PicklistMap:
+                            optionSets.Add($"{entity.Name}.{attribute.Name}");
+                            Imports.Add($"{entity.Name}_{attribute.Name}");
+                            classString += $@"public get {attribute.Name}(): {entity.Name}_{attribute.Name} {{
+														return this.getAttributeValue<{entity.Name}_{attribute.Name}>(""{attribute.Name}"");
+											  }}
+                                              public set {attribute.Name}(v: {entity.Name}_{attribute.Name}) {{
+														this.attributes[""{attribute.Name}""] = v;
+											  }}
+												";
+                            break;
 
                         case XrmType.Lookup:
                         case XrmType.PartyList:
