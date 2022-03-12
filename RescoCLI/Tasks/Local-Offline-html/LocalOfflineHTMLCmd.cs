@@ -17,10 +17,9 @@ namespace RescoCLI.Tasks
 {
 
     [Command(Name = "local-offline-html", Description = "Manage all Local Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand( typeof(LocalOfflineHTMLUpdaterCmd))]
+    [Subcommand(typeof(LocalOfflineHTMLUpdaterCmd))]
     class LocalOfflineHTMLCmd : RescoCLIBase
     {
-        Resco.Cloud.Client.WebService.DataService _service;
         public LocalOfflineHTMLCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
@@ -34,7 +33,7 @@ namespace RescoCLI.Tasks
             {
                 throw new Exception("Default Project is not selected");
             }
-           
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

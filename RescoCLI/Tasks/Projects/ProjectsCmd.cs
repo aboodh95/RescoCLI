@@ -17,7 +17,7 @@ namespace RescoCLI.Tasks
 {
 
     [Command(Name = "projects", Description = "Manage woodford Projects in Resco cloud", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand(typeof(ExportProjectCmd), typeof(ImportProjectCmd), typeof(SetDefaultProjectCmd),typeof(ExportAllProjectsCmd))]
+    [Subcommand(typeof(ExportProjectCmd), typeof(ImportProjectCmd), typeof(ExportAllProjectsCmd))]
     class ProjectsCmd : RescoCLIBase
     {
         Resco.Cloud.Client.WebService.DataService _service;

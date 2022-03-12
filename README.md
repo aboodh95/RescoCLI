@@ -18,6 +18,9 @@ So far, the tool has these set of commands <br />
 | Connections  |                          | Manage the Connections to Resco Orgs                                                                                             |
 |              | add                      | Add connection to the connection list                                                                                            |
 |              | remove                   | Remove connection from the connection list                                                                                       |
+| Code         |                          | Create classes as per your Entities                                                                                              |
+|              | c#                       | Create C# Classes                                                                                                                |
+|              | ts                       | Create TypeScript Classes                                                                                                        |
 | Plug-ins     |                          | Update plugin assembly in Resco Cloud                                                                                            |
 | Projects     |                          | Manage the Woodford Projects                                                                                                     |
 |              | Export                   | Export Woodford Project                                                                                                          |
@@ -46,6 +49,7 @@ rc logs
 ## Version History
 
 - 1.0.0.0  - Initial Release
+- 1.1.0.0  - Adding the support for entities creation as classes for C# and TypeScript
 
 ## License
 

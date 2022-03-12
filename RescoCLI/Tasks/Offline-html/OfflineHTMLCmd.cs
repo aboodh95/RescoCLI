@@ -17,14 +17,11 @@ namespace RescoCLI.Tasks
 {
 
     [Command(Name = "offline-html", Description = "Manage all Offline HTML files", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
-    [Subcommand( typeof(OfflineHTMLUpdaterCmd))]
+    [Subcommand(typeof(OfflineHTMLUpdaterCmd))]
     class OfflineHTMLCmd : RescoCLIBase
     {
-        Resco.Cloud.Client.WebService.DataService _service;
         public OfflineHTMLCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-
-
 
             var configuration = Configuration.GetConfigrationAsync().Result;
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
@@ -36,7 +33,7 @@ namespace RescoCLI.Tasks
             {
                 throw new Exception("Default Project is not selected");
             }
-           
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

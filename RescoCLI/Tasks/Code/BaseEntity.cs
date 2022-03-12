@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace RescoCLI.Tasks.Code
 {
-    public class HAEntity
+    public class BaseEntity
     {
         public Dictionary<string, object> attributes { get; set; } = new Dictionary<string, object>();
-        public HAEntity()
+        public BaseEntity()
         {
         }
-        public HAEntity(string entityName)
+        public BaseEntity(string entityName)
         {
             PrimaryEntity = entityName;
         }
-        public HAEntity(string entityName, Guid Id)
+        public BaseEntity(string entityName, Guid Id)
         {
             PrimaryEntity = entityName;
             this.Id = Id;

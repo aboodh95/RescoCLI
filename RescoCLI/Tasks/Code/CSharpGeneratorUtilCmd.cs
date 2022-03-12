@@ -23,7 +23,7 @@ namespace RescoCLI.Tasks
     {
         [Option(CommandOptionType.SingleValue, ShortName = "f", LongName = "folderPath", Description = "The path of the folder to extract entities to it, default on in configuration", ValueName = "folder path", ShowInHelpText = true)]
         public string FolderPath { get; set; }
-        [Option(CommandOptionType.SingleValue, ShortName = "n", LongName = "namespace", Description = "Code Files name space", ValueName = "HA.Resco", ShowInHelpText = true)]
+        [Option(CommandOptionType.SingleValue, ShortName = "n", LongName = "namespace", Description = "Code Files name space", ValueName = "Resco", ShowInHelpText = true)]
         public string Namespace { get; set; }
 
         public CSharpGeneratorUtilCmd(ILogger<RescoCLICmd> logger, IConsole console)
@@ -40,7 +40,7 @@ namespace RescoCLI.Tasks
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
             Configuration configuration = await Configuration.GetConfigrationAsync();
-            Namespace = string.IsNullOrEmpty(Namespace) ? "HA.Resco" : Namespace;
+            Namespace = string.IsNullOrEmpty(Namespace) ? "Resco" : Namespace;
             if (string.IsNullOrEmpty(FolderPath))
             {
                 FolderPath = configuration.CodeGenerationConfiguration.CSharpEntitiesFolderPath ?? "";
@@ -76,13 +76,12 @@ namespace RescoCLI.Tasks
                 CodeNamespace codeNamespace = new CodeNamespace(_namespace);
                 codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
                 codeNamespace.Imports.Add(new CodeNamespaceImport("XRMServer.Data"));
-                codeNamespace.Imports.Add(new CodeNamespaceImport("HA.Resco.Plugin"));
                 CodeTypeDeclaration targetClass = new(displayName)
                 {
                     IsClass = true,
                     TypeAttributes = TypeAttributes.Public
                 };
-                targetClass.BaseTypes.Add("HAEntity");
+                targetClass.BaseTypes.Add("BaseEntity");
 
                 CodeMemberField EntityLogicalNameField = new CodeMemberField
                 {
@@ -144,8 +143,8 @@ namespace RescoCLI.Tasks
                     codeMemberProperty.Name = attribute.Name;
                     codeMemberProperty.HasGet = true;
                     codeMemberProperty.HasSet = true;
-                    codeMemberProperty.Comments.Add(new CodeCommentStatement(AddSummary(attribute.Description),true));
-                    
+                    codeMemberProperty.Comments.Add(new CodeCommentStatement(AddSummary(attribute.Description), true));
+
                     switch (attribute.Type)
                     {
                         case XrmType.UniqueIdentifier:
