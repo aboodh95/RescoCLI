@@ -6,6 +6,8 @@ using Resco.Cloud.Client;
 using Resco.Cloud.Client.Data.Fetch;
 using Resco.Cloud.Client.Metadata;
 using RescoCLI.Configurations;
+using RescoCLI.Helpers;
+using RestSharp;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -15,6 +17,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace RescoCLI.Tasks
 {
@@ -238,20 +241,20 @@ namespace RescoCLI.Tasks
                 var targetClass = new CodeTypeDeclaration(item.Replace(".", "_"));
                 targetClass.IsEnum = true;
                 targetClass.TypeAttributes = TypeAttributes.Public;
-                var options = localizations.Where(x => x.StartsWith($"{item}.")).ToList();
+                var options = localizations.DisplayName.Where(x => x.Name.StartsWith($"{item}.")).ToList();
                 var addedValues = new List<string>();
                 foreach (var option in options)
                 {
-                    var value = ClearDisplayName(option.Split('=')[1]);
+                    var value = ClearDisplayName(option.Text);
                     while (addedValues.Any(x => x == value))
                     {
                         value = $"_{value}";
                     }
                     addedValues.Add(value);
-                    CodeMemberField field = new CodeMemberField
+                    CodeMemberField field = new ()
                     {
                         Name = value,
-                        InitExpression = new CodePrimitiveExpression(Convert.ToInt32(option.Split('=')[0].Split('.')[2])),
+                        InitExpression = new CodePrimitiveExpression(Convert.ToInt32(option.Name.Split('.')[2])),
                     };
                     targetClass.Members.Add(field);
                 }
@@ -282,25 +285,25 @@ namespace RescoCLI.Tasks
             }
             return "";
         }
-        private static List<string> GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
+        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
         {
-            var fetch = new Fetch("mobilelocalization");
-            fetch.Count = 5000;
-            fetch.Entity.AddAttribute("id");
-            fetch.Entity.AddAttribute("localization");
-            fetch.Entity.Filter = new Filter();
-            fetch.Entity.Filter.Conditions = new List<Condition>();
-            fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
-            var result = dataService.Fetch(fetch).Entities;
-            List<string> localizations = new List<string>();
-
-            foreach (var item in result)
+            var cred = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
+            
+            var client = new RestClient($"{dataService.Url}/rest/v1/metadata/$localizations?lcid=1033");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(plainTextBytes)}");
+            var body = @"";
+            request.AddParameter("text/plain", body, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            XmlSerializer serializer = new XmlSerializer(typeof(LocalizationResult));
+            using (StringReader reader = new StringReader(response.Content))
             {
-                var localization = item["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-                localizations.AddRange(localization);
+                var localizationResult = (LocalizationResult)serializer.Deserialize(reader);
+                return localizationResult;
             }
-
-            return localizations;
+      
         }
 
         private static string ClearDisplayName(string fieldName)

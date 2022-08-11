@@ -16,6 +16,9 @@ using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using RescoCLI.Configurations;
 using System.Threading.Tasks;
+using RescoCLI.Helpers;
+using System.Xml.Serialization;
+using RestSharp;
 
 namespace RescoCLI.Tasks
 {
@@ -194,22 +197,21 @@ namespace RescoCLI.Tasks
                 }
                 File.WriteAllText(Path.Combine(folderName, $"{displayName}.ts"), classString);
             }
-
             var optionSetFile = @"";
             foreach (var item in optionSets)
             {
-                var options = localizations.Where(x => x.Key.StartsWith($"{item}.")).Distinct().ToList();
+                var options = localizations.DisplayName.Where(x => x.Name.StartsWith($"{item}.")).Distinct().ToList();
                 optionSetFile += $@"export enum {item.Replace(".", "_")}{{";
                 var addedValues = new List<string>();
                 foreach (var option in options)
                 {
-                    var value = ClearDisplayName(option.Value);
+                    var value = ClearDisplayName(option.Text);
                     while (addedValues.Any(x => x == value))
                     {
                         value = $"_{value}";
                     }
                     addedValues.Add(value);
-                    optionSetFile += $"{value} = {option.Key.Split('=')[0].Split('.')[2]},\n";
+                    optionSetFile += $"{value} = {option.Name.Split('.')[2]},\n";
                 }
                 optionSetFile += "}\n";
 
@@ -229,35 +231,25 @@ namespace RescoCLI.Tasks
             }
             return "";
         }
-        private static Dictionary<string, string> GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
+        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
         {
-            var fetch = new Fetch("mobilelocalization");
-            fetch.Count = 500;
-            fetch.Entity.AddAttribute("id");
-            fetch.Entity.AddAttribute("localization");
-            fetch.Entity.Filter = new Filter();
-            fetch.Entity.Filter.Conditions = new List<Condition>();
-            fetch.Entity.Filter.Conditions.Add(new Condition { Attribute = "lcid", Operator = "eq", Value = "1033" });
-            fetch.Entity.OrderBy("createdon", false);
-            var result = dataService.Fetch(fetch);
-            Dictionary<string, string> localizations = new Dictionary<string, string>();
+            var cred = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
 
-            foreach (var item in result.Entities)
+            var client = new RestClient($"{dataService.Url}/rest/v1/metadata/$localizations?lcid=1033");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(plainTextBytes)}");
+            var body = @"";
+            request.AddParameter("text/plain", body, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            XmlSerializer serializer = new XmlSerializer(typeof(LocalizationResult));
+            using (StringReader reader = new StringReader(response.Content))
             {
-                var _localizations = item["localization"].ToString().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-                foreach (var _loc in _localizations)
-                {
-
-                    var key = _loc.Split('=')[0];
-                    var value = string.Concat(_loc.Split('=').Skip(1));
-                    localizations[key] = value;
-                }
-
+                var localizationResult = (LocalizationResult)serializer.Deserialize(reader);
+                return localizationResult;
             }
 
-
-
-            return localizations;
         }
 
         private static string ClearDisplayName(string fieldName)
@@ -270,6 +262,7 @@ namespace RescoCLI.Tasks
                 .Replace(".", "")
                 .Replace("'", "")
                 .Replace("/", "")
+                .Replace("&", "_")
                 .Replace("\\", "");
         }
     }
