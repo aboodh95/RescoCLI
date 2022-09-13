@@ -11,14 +11,14 @@ namespace RescoCLI
     {
         private const string Sequence = @"/-\|";
         private int counter = 0;
-   
+
         private readonly int delay;
         private bool active;
         private readonly Thread thread;
 
-        public Spinner( int delay = 100)
+        public Spinner(int delay = 100)
         {
-    
+
             this.delay = delay;
             thread = new Thread(Spin);
         }
@@ -47,11 +47,15 @@ namespace RescoCLI
 
         private void Draw(char c)
         {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(c);
-            Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
-            Console.ForegroundColor = color;
+            try
+            {
+                Console.Write(c);
+                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+            }
+            catch
+            {
+            }
+
         }
 
         private void Turn()
