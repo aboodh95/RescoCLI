@@ -23,12 +23,12 @@ It do provide set of commands that can accelerate the process of development</De
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Resco.Cloud.Client" Version="1.13.3" />
-    <PackageReference Include="RestSharp" Version="106.11.7" />
-    <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-rc.1.22426.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
+    <PackageReference Include="Resco.Cloud.Client" Version="1.15.0" />
+    <PackageReference Include="RestSharp" Version="108.0.2-alpha.0.10" />
+    <PackageReference Include="System.CodeDom" Version="7.0.0-rc.1.22426.10" />
   </ItemGroup>
 
   <ItemGroup>

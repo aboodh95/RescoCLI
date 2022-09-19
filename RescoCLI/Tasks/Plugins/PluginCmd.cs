@@ -67,11 +67,8 @@ namespace RescoCLI.Tasks
                 throw new Exception("Cannot find plugin in Resco Server, Please create it manually first in order to update it with the tool");
             }
             Console.WriteLine($"Updating Plug-in {plugin["name"].ToString()}");
-            var client = new RestClient($"{selectedConnections.URL}/rest/v1/data/RegisterPlugin")
-            {
-                Timeout = -1
-            };
-            var request = new RestRequest(Method.POST);
+            var client = new RestClient($"{selectedConnections.URL}/rest/v1/data/RegisterPlugin");
+            var request = new RestRequest("", Method.Post);
             var AuthorizationToken = $"{selectedConnections.UserName}:{selectedConnections.Password}";
             request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(AuthorizationToken))}");
             var bytes = await File.ReadAllBytesAsync(DllPath);
@@ -84,7 +81,7 @@ namespace RescoCLI.Tasks
             };
             request.AddHeader("Content-Type", "application/xml");
             request.AddParameter("application/xml", data.ToXML(), ParameterType.RequestBody);
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             return 0;
         }
         private bool CheckIfDLLExist()

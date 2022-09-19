@@ -237,12 +237,11 @@ namespace RescoCLI.Tasks
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
 
             var client = new RestClient($"{dataService.Url}/rest/v1/metadata/$localizations?lcid=1033");
-            client.Timeout = -1;
-            var request = new RestRequest(Method.GET);
+            var request = new RestRequest("", Method.Get);
             request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(plainTextBytes)}");
             var body = @"";
             request.AddParameter("text/plain", body, ParameterType.RequestBody);
-            IRestResponse response = client.Execute(request);
+            RestResponse response = client.Execute(request);
             XmlSerializer serializer = new XmlSerializer(typeof(LocalizationResult));
             using (StringReader reader = new StringReader(response.Content))
             {

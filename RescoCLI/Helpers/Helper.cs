@@ -15,15 +15,13 @@ namespace RescoCLI
 		public static async Task<string> ExportProjectAsync(this DataService dataService ,string id)
 		{
 			var ZIP_PATH = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
-			var client = new RestClient($"{dataService.Url}/rest/v1/data/ExportProject?$id={id}")
-			{
-				Timeout = -1
-			};
-			var request = new RestRequest(Method.POST);
+			var client = new RestClient($"{dataService.Url}/rest/v1/data/ExportProject?$id={id}");
+			
+			var request = new RestRequest("", Method.Post);
 			var Credentials = dataService.Credentials.GetCredential(new Uri(dataService.Url),"");
 			var AuthorizationToken = $"{Credentials.UserName}:{Credentials.Password}";
 			request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(AuthorizationToken))}");
-			IRestResponse response = client.Execute(request);
+			RestResponse response = client.Execute(request);
 			var file = client.DownloadData(request);
 			await File.WriteAllBytesAsync(ZIP_PATH, file);
 			return ZIP_PATH;
@@ -33,11 +31,8 @@ namespace RescoCLI
 		public static async Task ImportProjectAsync(this DataService dataService, string id,bool publish, string filePath)
 		{
 			var data = await File.ReadAllBytesAsync(filePath);
-			var client = new RestClient($"{dataService.Url}/rest/v1/data/ImportProject?$id={id}&$publish={publish}")
-			{
-				Timeout = -1
-			};
-			var request = new RestRequest(Method.POST);
+			var client = new RestClient($"{dataService.Url}/rest/v1/data/ImportProject?$id={id}&$publish={publish}");
+			var request = new RestRequest("" , Method.Post);
 			var Credentials = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
 			var AuthorizationToken = $"{Credentials.UserName}:{Credentials.Password}";
 			request.AddHeader("Content-Type", "application/zip");
