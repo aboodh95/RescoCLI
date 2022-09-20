@@ -24,7 +24,9 @@ namespace RescoCLI.Tasks
 
         [Option(CommandOptionType.NoValue, ShortName = "a", LongName = "All", Description = "Update All Projects", ValueName = "All", ShowInHelpText = true)]
         public bool UpdateAll { get; set; } = false;
-     
+        [Option(CommandOptionType.SingleValue, ShortName = "pid", LongName = "ProjectId", Description = "Update All Controls For This Project", ValueName = "Project Id", ShowInHelpText = true)]
+        public string ProjectId { get; set; } = "";
+
         [Option(CommandOptionType.SingleValue, ShortName = "i", LongName = "ProjectIndex", Description = "The index of project configuration", ValueName = "ProjectIndex", ShowInHelpText = true)]
         public int projectIndex { get; set; }
 
@@ -43,9 +45,10 @@ namespace RescoCLI.Tasks
         {
             var configuration = await Configuration.GetConfigrationAsync();
             Dictionary<string, string> FolderNameAndPath = new Dictionary<string, string>();
-            if (UpdateAll)
+            if (UpdateAll || !string.IsNullOrEmpty(ProjectId))
             {
                 var configurationByProject = configuration.OfflineHTMLConfigurations.GroupBy(x => x.SelectedProjectId);
+                configurationByProject = !string.IsNullOrEmpty(ProjectId) ? configurationByProject.Where(x => x.Key == ProjectId) : configurationByProject;
                 foreach (var item in configurationByProject)
                 {
                     FolderNameAndPath = item.ToDictionary(x => x.FolderName, x => x.FolderPath);
@@ -98,7 +101,15 @@ namespace RescoCLI.Tasks
             var newZipPath = $"{Path.GetTempPath()}\\{Guid.NewGuid()}.zip";
             ZipFile.CreateFromDirectory(zipFolderPath, newZipPath);
             Console.WriteLine("Importing Project...");
-            await dataService.ImportProjectAsync(projectId, true, newZipPath);
+            try
+            {
+                await dataService.ImportProjectAsync(projectId, true, newZipPath);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
             spinner.Stop();
         }
 
