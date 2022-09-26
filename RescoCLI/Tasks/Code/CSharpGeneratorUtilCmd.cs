@@ -245,7 +245,7 @@ namespace RescoCLI.Tasks
                 var addedValues = new List<string>();
                 foreach (var option in options)
                 {
-                    var value = ClearDisplayName(option.Text);
+                    var value = ClearDisplayName(option.Text ?? "");
                     while (addedValues.Any(x => x == value))
                     {
                         value = $"_{value}";
