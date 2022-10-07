@@ -20,7 +20,7 @@ namespace RescoCLI
                               .AddJsonFile(AppDomain.CurrentDomain.BaseDirectory + "\\appsettings.json", optional: true, reloadOnChange: true)
                               .Build();
             var configFilePath = appSettings["OverrideConfiguration:configFilePath"];
-            if (!string.IsNullOrEmpty(configFilePath) && ConfigFileExist(configFilePath))
+            if (!string.IsNullOrEmpty(configFilePath) && RescoCLIBase.ConfigFileExist(configFilePath))
             {
                 Configuration.ConfigurationFilePath = configFilePath;
             }
@@ -33,20 +33,7 @@ namespace RescoCLI
 
         }
 
-        private static bool ConfigFileExist(string ConfigFile)
-        {
-            if (!File.Exists(ConfigFile))
-            {
-                var folder = Environment.CurrentDirectory;
-                ConfigFile = Path.Combine(folder, ConfigFile);
-                if (!File.Exists(ConfigFile))
-                {
-                    return false;
-                }
-                return true;
-            }
-            return true;
-        }
+       
 
 
     }

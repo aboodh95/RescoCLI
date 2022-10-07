@@ -31,18 +31,19 @@ namespace RescoCLI.Tasks
 
         public CSharpGeneratorUtilCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-            var configuration = Configuration.GetConfigrationAsync().Result;
-            var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            if (selectedConnections == null)
-            {
-                throw new Exception("No connection do exists");
-            }
+      
 
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            await base.OnExecute(app);
             Configuration configuration = await Configuration.GetConfigrationAsync();
+            var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
+            if (selectedConnections == null)
+            {
+                throw new Exception("No connection do exists");
+            }
             Namespace = string.IsNullOrEmpty(Namespace) ? "Resco" : Namespace;
             if (string.IsNullOrEmpty(FolderPath))
             {

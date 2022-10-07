@@ -22,10 +22,12 @@ namespace RescoCLI.Tasks
 
         public ExportAllProjectsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
+        }
 
-
-
-            var configuration = Configuration.GetConfigrationAsync().Result;
+        protected override async Task<int> OnExecute(CommandLineApplication app)
+        {
+            await base.OnExecute(app);
+            var configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
             {
@@ -36,10 +38,6 @@ namespace RescoCLI.Tasks
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
 
-        }
-
-        protected override async Task<int> OnExecute(CommandLineApplication app)
-        {
             Spinner spinner = new Spinner();
             spinner.Start();
             var folder = Environment.CurrentDirectory;
@@ -60,7 +58,7 @@ namespace RescoCLI.Tasks
                 }
                 ZipFile.ExtractToDirectory(projectZipFile, projectFolder, true);
             }
-            spinner.Stop(); 
+            spinner.Stop();
             return 0;
         }
     }

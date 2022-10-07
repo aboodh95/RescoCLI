@@ -24,9 +24,12 @@ namespace RescoCLI.Tasks
         public ProjectsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
+        }
 
-
-            var configuration = Configuration.GetConfigrationAsync().Result;
+        protected override async Task<int> OnExecute(CommandLineApplication app)
+        {
+            await base.OnExecute(app);
+            var configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
             {
@@ -36,11 +39,6 @@ namespace RescoCLI.Tasks
             {
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
-
-        }
-
-        protected override async Task<int> OnExecute(CommandLineApplication app)
-        {
             var folder = System.AppDomain.CurrentDomain.BaseDirectory;
             var fetch = new Fetch("mobileproject");
             fetch.Entity.AddAttribute("name");

@@ -23,6 +23,7 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            await base.OnExecute(app);
             var configuration = await Configuration.GetConfigrationAsync();
             for (int i = 0; i < configuration.Connections.Count; i++)
             {

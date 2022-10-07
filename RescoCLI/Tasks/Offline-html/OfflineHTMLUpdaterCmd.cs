@@ -19,9 +19,6 @@ namespace RescoCLI.Tasks
     public class OfflineHTMLUpdaterCmd : RescoCLIBase
     {
 
-        [Option(CommandOptionType.NoValue, ShortName = "d", LongName = "isDevelopment", Description = "Pushing To Development", ValueName = "isDevelopment", ShowInHelpText = true)]
-        public bool isDevelopment { get; set; } = true;
-
         [Option(CommandOptionType.NoValue, ShortName = "a", LongName = "All", Description = "Update All Projects", ValueName = "All", ShowInHelpText = true)]
         public bool UpdateAll { get; set; } = false;
         [Option(CommandOptionType.SingleValue, ShortName = "pid", LongName = "ProjectId", Description = "Update All Controls For This Project", ValueName = "Project Id", ShowInHelpText = true)]
@@ -32,18 +29,18 @@ namespace RescoCLI.Tasks
 
         public OfflineHTMLUpdaterCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-            var configuration = Configuration.GetConfigrationAsync().Result;
-            var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-            if (selectedConnections == null)
-            {
-                throw new Exception("No connection do exists");
-            }
 
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            await base.OnExecute(app);
             var configuration = await Configuration.GetConfigrationAsync();
+            var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
+            if (selectedConnections == null)
+            {
+                throw new Exception("No connection do exists");
+            }
             Dictionary<string, string> FolderNameAndPath = new Dictionary<string, string>();
             if (UpdateAll || !string.IsNullOrEmpty(ProjectId))
             {
@@ -52,8 +49,8 @@ namespace RescoCLI.Tasks
                 foreach (var item in configurationByProject)
                 {
                     FolderNameAndPath = item.ToDictionary(x => x.FolderName, x => x.FolderPath);
-                    var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-                    await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), item.Key, FolderNameAndPath, isDevelopment);
+                     selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
+                    await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), item.Key, FolderNameAndPath);
                 }
              
             }
@@ -65,14 +62,14 @@ namespace RescoCLI.Tasks
                     throw new Exception($"Configuration with index: {projectIndex} doesn't exists");
                 }
                 FolderNameAndPath.Add(offlineHTMLConfiguration.FolderName, offlineHTMLConfiguration.FolderPath);
-                var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
-                await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), offlineHTMLConfiguration.SelectedProjectId, FolderNameAndPath, isDevelopment);
+                 selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
+                await PushFiles(selectedConnections.URL, new NetworkCredential(selectedConnections.UserName, selectedConnections.Password), offlineHTMLConfiguration.SelectedProjectId, FolderNameAndPath);
             }
          
             return 0;
         }
 
-        public async Task PushFiles(string url, NetworkCredential networkCredential, string projectId,Dictionary<string,string> FolderNameAndPath , bool isDevelopment)
+        public async Task PushFiles(string url, NetworkCredential networkCredential, string projectId,Dictionary<string,string> FolderNameAndPath)
         {
             Spinner spinner = new Spinner();
             spinner.Start();
@@ -94,7 +91,7 @@ namespace RescoCLI.Tasks
                 }
                 Directory.CreateDirectory(distPath);
                 Console.WriteLine("Updating Files...");
-                CopyFoldersAndFiles(item.Value, distPath,isDevelopment);
+                CopyFoldersAndFiles(item.Value, distPath);
             }
            
 
@@ -113,30 +110,13 @@ namespace RescoCLI.Tasks
             spinner.Stop();
         }
 
-        private void CopyFoldersAndFiles(string folderPath, string distPath,bool isDevelopment)
+        private void CopyFoldersAndFiles(string folderPath, string distPath)
         {
             var files = Directory.GetFiles(folderPath);
             var folders = Directory.GetDirectories(folderPath);
             foreach (var item in files)
             {
                 FileInfo fileInfo = new(item);
-                if (fileInfo.Extension.ToLower() == ".js")
-                {
-                    if (isDevelopment)
-                    {
-                        if (item.EndsWith(".min.js"))
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        if (!item.EndsWith(".min.js"))
-                        {
-                            continue;
-                        }
-                    }
-                }
                 File.Copy(item, Path.Combine(distPath, fileInfo.Name));
             }
             foreach (var item in folders)
@@ -147,7 +127,7 @@ namespace RescoCLI.Tasks
                 {
                     Directory.CreateDirectory(newFolderPath);
                 }
-                CopyFoldersAndFiles(item, newFolderPath,isDevelopment);
+                CopyFoldersAndFiles(item, newFolderPath);
             }
         }
     }

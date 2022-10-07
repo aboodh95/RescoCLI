@@ -38,6 +38,7 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            await base.OnExecute(app);
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
             {
                 URL = Prompt.GetString("login url:", URL);

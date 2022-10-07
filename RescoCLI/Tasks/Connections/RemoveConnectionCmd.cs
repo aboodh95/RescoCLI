@@ -28,6 +28,7 @@ namespace RescoCLI.Tasks
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
+            await base.OnExecute(app);
             if (Index == null)
             {
                 Index = Prompt.GetInt("connection index:", Index);

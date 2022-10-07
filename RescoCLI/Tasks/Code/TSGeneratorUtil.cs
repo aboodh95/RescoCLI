@@ -29,18 +29,17 @@ namespace RescoCLI.Tasks
         public string FolderPath { get; set; }
         public TSGeneratorUtil(ILogger<RescoCLICmd> logger, IConsole console)
         {
-            var configuration = Configuration.GetConfigrationAsync().Result;
+        }
+
+        protected override async Task<int> OnExecute(CommandLineApplication app)
+        {
+            await base.OnExecute(app);
+            Configuration configuration = await Configuration.GetConfigrationAsync();
             var selectedConnections = configuration.Connections.FirstOrDefault(x => x.IsSelected);
             if (selectedConnections == null)
             {
                 throw new Exception("No connection do exists");
             }
-
-        }
-
-        protected override async Task<int> OnExecute(CommandLineApplication app)
-        {
-            Configuration configuration = await Configuration.GetConfigrationAsync();
             if (string.IsNullOrEmpty(FolderPath))
             {
                 FolderPath = configuration.CodeGenerationConfiguration.TSEntitiesFolderPath;
