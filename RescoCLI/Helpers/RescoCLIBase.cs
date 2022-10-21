@@ -1,4 +1,6 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RescoCLI.Configurations;
@@ -21,6 +23,8 @@ namespace RescoCLI
     {
         [Option(CommandOptionType.SingleValue,ShortName  = "configuration-path", LongName = "configuration-path", Description = "The path to load the RescoCLI.Json", ShowInHelpText = true)]
         public string ConfigurationPath { get; set; }
+        [Option(CommandOptionType.NoValue, ShortName = "debug", LongName = "attach-debugger", Description = "If you want to attach debugger on the app", ShowInHelpText = true)]
+        public bool AttachDebugger { get; set; } = false;
         public RescoCLIBase()
         {
         }
@@ -32,7 +36,23 @@ namespace RescoCLI
             }
             else
             {
-                Configuration.ConfigurationFilePath = Path.Combine(Configuration.ConfigurationFolderPath, "RescoCLI.json");
+                var appSettings = new ConfigurationBuilder()
+                                  .AddJsonFile(AppDomain.CurrentDomain.BaseDirectory + "\\appsettings.json", optional: true, reloadOnChange: true)
+                                  .Build();
+                var configFilePath = appSettings["OverrideConfiguration:configFilePath"];
+                if (!string.IsNullOrEmpty(configFilePath) && RescoCLIBase.ConfigFileExist(configFilePath))
+                {
+                    Configuration.ConfigurationFilePath = configFilePath;
+                }
+                else
+                {
+                    Configuration.ConfigurationFilePath = Path.Combine(Configuration.ConfigurationFolderPath, "RescoCLI.json");
+                }
+            }
+            if (AttachDebugger)
+            {
+                Console.Write("Attach Debugger Then Click Enter");
+                Console.ReadLine();
             }
             return Task.FromResult(0);
         }
