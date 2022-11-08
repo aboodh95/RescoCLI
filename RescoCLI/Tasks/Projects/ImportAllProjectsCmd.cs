@@ -74,7 +74,7 @@ namespace RescoCLI.Tasks
                 File.Delete(zipPath);
 
             }
-
+            spinner.Stop();
             return 0;
         }
 
