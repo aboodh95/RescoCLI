@@ -22,7 +22,7 @@ namespace RescoCLI.Tasks
         Resco.Cloud.Client.WebService.DataService _service;
 
         [Option(CommandOptionType.NoValue, ShortName = "publish", LongName = "publish", Description = "Publish the project", ValueName = "publish", ShowInHelpText = true)]
-        public bool Publish { get; set; } = true;
+        public bool Publish { get; set; } = false;
         public ImportAllProjectsCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
 
@@ -43,8 +43,6 @@ namespace RescoCLI.Tasks
             };
 
             var currentFolder = Environment.CurrentDirectory;
-            Spinner spinner = new Spinner();
-            spinner.Start();
             var fetch = new Fetch("mobileproject");
             fetch.Entity.AddAttribute("name");
             fetch.Entity.AddAttribute("id");
@@ -68,13 +66,13 @@ namespace RescoCLI.Tasks
                 {
                     await _service.ImportProjectAsync(ProjectId, Publish, zipPath);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                 }
                 File.Delete(zipPath);
 
             }
-            spinner.Stop();
             return 0;
         }
 
