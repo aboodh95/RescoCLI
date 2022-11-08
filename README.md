@@ -26,6 +26,7 @@ So far, the tool has these set of commands <br />
 |              | Export                   | Export Woodford Project                                                                                                          |
 |              | Export-All               | Export All Woodford Projects                                                                                                     |
 |              | Import                   | Import Woodford Project                                                                                                          |
+|              | Import-All               | Import all projects in this folder                                                                                               |
 | logs         |                          | Display list of recent logs (default 10)                                                                                         |
 |              | open                     | Open the logs as per the last loading of the logs                                                                                |
 | Offline-html |                          | Manage the Offline HTML File                                                                                                     |
