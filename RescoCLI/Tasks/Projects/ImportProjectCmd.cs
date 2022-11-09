@@ -20,15 +20,17 @@ namespace RescoCLI.Tasks
     {
         Resco.Cloud.Client.WebService.DataService _service;
 
-        [Option(CommandOptionType.SingleValue, ShortName = "pid", LongName = "projectId", Description = "The Id of the project to import", ValueName = "project id", ShowInHelpText = true)]
+        [Option(CommandOptionType.SingleValue, ShortName = "pid", LongName = "projectId", Description = "The Id of the project to export", ValueName = "project id", ShowInHelpText = true)]
         public string ProjectId { get; set; }
-        [Option(CommandOptionType.SingleValue, ShortName = "p", LongName = "path", Description = "The path of the ZIP file", ValueName = "project path", ShowInHelpText = true)]
+        [Option(CommandOptionType.SingleValue, ShortName = "pname", LongName = "projectName", Description = "The name of the project to export", ValueName = "project name", ShowInHelpText = true)]
+        public string ProjectName { get; set; }
+        [Option(CommandOptionType.SingleValue, ShortName = "p", LongName = "path", Description = "The path of the ZIP file or folder", ValueName = "project path", ShowInHelpText = true)]
         public string ProjectPath { get; set; }
         [Option(CommandOptionType.NoValue, ShortName = "publish", LongName = "publish", Description = "Publish the project", ValueName = "publish", ShowInHelpText = true)]
         public bool Publish { get; set; } = false;
         public ImportProjectCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-         
+
         }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
@@ -45,16 +47,46 @@ namespace RescoCLI.Tasks
                 Credentials = new NetworkCredential(selectedConnections.UserName, selectedConnections.Password)
             };
 
-            if (string.IsNullOrEmpty(ProjectId))
+
+            var fetch = new Fetch("mobileproject");
+            fetch.Entity.AddAttribute("name");
+            fetch.Entity.AddAttribute("id");
+            fetch.Entity.AddAttribute("resco_appid");
+            fetch.Entity.Filter = new Filter();
+            if (!string.IsNullOrEmpty(ProjectId))
             {
-                Console.WriteLine("Project Id or Name should be passed");
+                fetch.Entity.Filter.Where("id", "eq", ProjectId);
+            }
+            else
+            {
+                fetch.Entity.Filter.Where("name", "eq", ProjectName);
+            }
+            var projects = _service.Fetch(fetch).Entities;
+            if (projects.Count == 0)
+            {
+                Console.WriteLine("Cannot find project with provided name");
                 return 1;
             }
-            if (!File.Exists(ProjectPath))
+            if (ProjectPath.EndsWith("\\"))
             {
-                throw new FileNotFoundException("Cannot find project file");
+                ProjectPath = ProjectPath.Remove(ProjectPath.Length - 1);
             }
-            await _service.ImportProjectAsync(ProjectId, Publish, ProjectPath);
+            string zipPath = "";
+            FileAttributes attr = File.GetAttributes(ProjectPath);
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                 zipPath = $"{ProjectPath}.zip";
+                Console.WriteLine($"Importing {projects[0]["name"]}");
+
+                ZipFile.CreateFromDirectory(ProjectPath, zipPath);
+                ProjectPath = zipPath;
+            }
+
+            await _service.ImportProjectAsync(projects[0]["id"].ToString(), Publish, ProjectPath);
+            if (zipPath.Length != 0)
+            {
+                File.Delete(zipPath);
+            }
             return 0;
         }
 
