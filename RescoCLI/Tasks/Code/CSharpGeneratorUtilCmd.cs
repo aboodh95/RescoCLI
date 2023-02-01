@@ -107,7 +107,7 @@ namespace RescoCLI.Tasks
 
                 CodeMemberField PrimaryIdAttributeField = new CodeMemberField
                 {
-                    Attributes = MemberAttributes.Public | MemberAttributes.Const,
+                    Attributes = MemberAttributes.Public | MemberAttributes.New | MemberAttributes.Const ,
                     Name = "PrimaryIdAttribute",
                     InitExpression = new CodePrimitiveExpression(entity.PrimaryKeyName),
                     Type = new CodeTypeReference(typeof(String))
