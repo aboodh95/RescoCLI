@@ -31,7 +31,7 @@ namespace RescoCLI.Tasks
 
         public CSharpGeneratorUtilCmd(ILogger<RescoCLICmd> logger, IConsole console)
         {
-      
+
 
         }
 
@@ -107,7 +107,7 @@ namespace RescoCLI.Tasks
 
                 CodeMemberField PrimaryIdAttributeField = new CodeMemberField
                 {
-                    Attributes = MemberAttributes.Public | MemberAttributes.New | MemberAttributes.Const ,
+                    Attributes = MemberAttributes.Public |  MemberAttributes.Const ,
                     Name = "PrimaryIdAttribute",
                     InitExpression = new CodePrimitiveExpression(entity.PrimaryKeyName),
                     Type = new CodeTypeReference(typeof(String))
@@ -290,7 +290,7 @@ namespace RescoCLI.Tasks
         {
             var cred = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
-            
+
             var client = new RestClient($"{dataService.Url}/rest/v1/metadata/$localizations?lcid=1033");
             var request = new RestRequest("",Method.Get);
             request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(plainTextBytes)}");
@@ -303,7 +303,7 @@ namespace RescoCLI.Tasks
                 var localizationResult = (LocalizationResult)serializer.Deserialize(reader);
                 return localizationResult;
             }
-      
+
         }
 
         private static string ClearDisplayName(string fieldName)

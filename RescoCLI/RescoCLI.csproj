@@ -30,6 +30,9 @@ It do provide set of commands that can accelerate the process of development</De
     <PackageReference Include="RestSharp" Version="108.0.2" />
     <PackageReference Include="System.CodeDom" Version="7.0.0-rc.1.22426.10" />
   </ItemGroup>
+  <PropertyGroup>
+    <RestoreFallbackFolders>clear</RestoreFallbackFolders>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
