@@ -244,6 +244,7 @@ namespace RescoCLI.Tasks
                 targetClass.TypeAttributes = TypeAttributes.Public;
                 var options = localizations.DisplayName.Where(x => x.Name.StartsWith($"{item}.")).ToList();
                 var addedValues = new List<string>();
+
                 foreach (var option in options)
                 {
                     var value = ClearDisplayName(option.Text ?? "");
@@ -252,10 +253,19 @@ namespace RescoCLI.Tasks
                         value = $"_{value}";
                     }
                     addedValues.Add(value);
+                    var optionValue = 0;
+                    if (option.Name.Split('.').Length == 3 && !string.IsNullOrEmpty(option.Name.Split('.')[2]))
+                    {
+                        optionValue = Convert.ToInt32(option.Name.Split('.')[2]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
                     CodeMemberField field = new ()
                     {
                         Name = value,
-                        InitExpression = new CodePrimitiveExpression(Convert.ToInt32(option.Name.Split('.')[2])),
+                        InitExpression = new CodePrimitiveExpression(optionValue),
                     };
                     targetClass.Members.Add(field);
                 }
