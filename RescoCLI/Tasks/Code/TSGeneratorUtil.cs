@@ -57,17 +57,25 @@ namespace RescoCLI.Tasks
 
         public static void Generat(string folderName, string url, NetworkCredential credentials)
         {
+            var dataBaseUrl = url.Replace("https://","").Replace("http://","");
+            string databaseName = "";
+            if (dataBaseUrl.Contains("/"))
+            {
+                databaseName = dataBaseUrl.Split('/')[1];
+                url = url.Replace(dataBaseUrl, dataBaseUrl.Split('/')[0]);
+            }
             var optionSets = new List<string>();
-            var dataService = new Resco.Cloud.Client.WebService.DataService(url);
+            var dataService = new Resco.Cloud.Client.WebService.DataService(url, databaseName);
             dataService.Credentials = credentials;
 
-            var metadataService = new Resco.Cloud.Client.WebService.MetadataService(url);
+            var metadataService = new Resco.Cloud.Client.WebService.MetadataService(url, databaseName);
             metadataService.Credentials = credentials;
             // retrieve all entities
             var entities = new List<MetadataEntity>();
             entities.AddRange(metadataService.RetrieveEntities());
 
-            var localizations = GetLocalization(dataService);
+            var localizations = GetLocalization(dataService, $"{url}",$"/{databaseName}");
+            Console.WriteLine($"Total Entities: {entities.Count}");
             var MetadataTypesFile = @"export class MetadataTypes {
                                         public static Types = {}
                                     }";
@@ -230,12 +238,11 @@ namespace RescoCLI.Tasks
             }
             return "";
         }
-        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService)
+        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService, string url,string databaseName)
         {
             var cred = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
-
-            var client = new RestClient($"{dataService.Url}/rest/v1/metadata/$localizations?lcid=1033");
+            var client = new RestClient($"{url}/rest/v1/metadata{databaseName}/$localizations?lcid=1033");
             var request = new RestRequest("", Method.Get);
             request.AddHeader("Authorization", $"Basic {Convert.ToBase64String(plainTextBytes)}");
             var body = @"";
