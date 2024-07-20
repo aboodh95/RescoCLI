@@ -343,7 +343,7 @@ namespace RescoCLI.Tasks
                 return "_";
             }
             char stringFirstCharacter = fieldName.ToCharArray().ElementAt(0);
-            if (char.IsNumber(stringFirstCharacter))
+            if (char.IsDigit(stringFirstCharacter))
             {
                 fieldName = $"_{fieldName}";
             }

@@ -57,7 +57,7 @@ namespace RescoCLI.Tasks
 
         public static void Generat(string folderName, string url, NetworkCredential credentials)
         {
-            var dataBaseUrl = url.Replace("https://","").Replace("http://","");
+            var dataBaseUrl = url.Replace("https://", "").Replace("http://", "");
             string databaseName = "";
             if (dataBaseUrl.Contains("/"))
             {
@@ -74,7 +74,7 @@ namespace RescoCLI.Tasks
             var entities = new List<MetadataEntity>();
             entities.AddRange(metadataService.RetrieveEntities());
 
-            var localizations = GetLocalization(dataService, $"{url}",$"/{databaseName}");
+            var localizations = GetLocalization(dataService, $"{url}", $"/{databaseName}");
             Console.WriteLine($"Total Entities: {entities.Count}");
             var MetadataTypesFile = @"export class MetadataTypes {
                                         public static Types = {}
@@ -199,7 +199,7 @@ namespace RescoCLI.Tasks
 ";
                 if (Imports.Count != 0)
                 {
-                    classString = $@"import {{{ string.Join(", ", Imports)}}} from ""./OptionSets"";
+                    classString = $@"import {{{string.Join(", ", Imports)}}} from ""./OptionSets"";
                                     {classString}";
                 }
                 File.WriteAllText(Path.Combine(folderName, $"{displayName}.ts"), classString);
@@ -238,7 +238,7 @@ namespace RescoCLI.Tasks
             }
             return "";
         }
-        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService, string url,string databaseName)
+        private static LocalizationResult GetLocalization(Resco.Cloud.Client.WebService.DataService dataService, string url, string databaseName)
         {
             var cred = dataService.Credentials.GetCredential(new Uri(dataService.Url), "");
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes($"{cred.UserName}:{cred.Password}");
@@ -259,8 +259,8 @@ namespace RescoCLI.Tasks
 
         private static string ClearDisplayName(string fieldName)
         {
-            return fieldName
-                .Replace(" ", "")
+            fieldName = fieldName
+               .Replace(" ", "")
                 .Replace("-", "")
                 .Replace("(", "")
                 .Replace(")", "")
@@ -269,6 +269,18 @@ namespace RescoCLI.Tasks
                 .Replace("/", "")
                 .Replace("&", "_")
                 .Replace("\\", "");
+
+            if (fieldName.Length == 0)
+            {
+                return "_";
+            }
+            char stringFirstCharacter = fieldName.ToCharArray().ElementAt(0);
+            if (char.IsDigit(stringFirstCharacter))
+            {
+                fieldName = $"_{fieldName}";
+            }
+
+            return fieldName;
         }
     }
 }
